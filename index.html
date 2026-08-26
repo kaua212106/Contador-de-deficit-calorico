@@ -490,6 +490,36 @@ textarea{resize:vertical}
   font-size:10px;
 }
 
+.quick-btn.kcal-shortcut{
+  grid-column:1/-1;
+  min-height:70px;
+  display:grid;
+  grid-template-columns:42px 1fr auto;
+  align-items:center;
+  gap:11px;
+}
+
+.quick-btn.kcal-shortcut .quick-kcal-icon{
+  width:42px;
+  height:42px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  background:var(--primarySoft);
+  color:var(--primary);
+  font-size:20px;
+}
+
+.quick-btn.kcal-shortcut b{
+  margin-top:0;
+}
+
+.quick-btn.kcal-shortcut .quick-arrow{
+  color:var(--primary);
+  font-size:21px;
+  font-weight:850;
+}
+
 /* FORM */
 .field-grid{
   display:grid;
@@ -1023,6 +1053,15 @@ canvas{
       <span>🗓️</span>
       <b>Planejar semana</b>
       <small>Meta e dias de manutenção</small>
+    </button>
+
+    <button class="quick-btn kcal-shortcut" id="openCaloriesApp">
+      <span class="quick-kcal-icon">🍽️</span>
+      <span>
+        <b>Contagem de Calorias</b>
+        <small>Abrir rapidamente o app de kcal</small>
+      </span>
+      <span class="quick-arrow">›</span>
     </button>
   </div>
 </section>
@@ -2347,6 +2386,7 @@ $("menuBtn").onclick=openMenu;
 $("menuClose").onclick=closeMenu;
 $("menuModal").onclick=e=>{if(e.target===$("menuModal"))closeMenu()};
 $("plusBtn").onclick=()=>showPage("record");
+$("openCaloriesApp").onclick=()=>{location.href="https://kaua212106.github.io/Contagem-de-calorias-/";};
 
 document.querySelectorAll("[data-page]").forEach(btn=>{
   btn.onclick=()=>showPage(btn.dataset.page);
