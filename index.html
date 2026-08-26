@@ -946,7 +946,7 @@ canvas{
 <!-- INÍCIO -->
 <section class="page active" id="page-home">
   <div class="hero-card">
-    <div class="hero-label">Falta para a meta</div>
+    <div class="hero-label" id="heroLabel">Falta para a meta</div>
     <div class="hero-number" id="heroRemaining">0 kcal</div>
     <div class="hero-text" id="heroText">Configure seu perfil e sua meta para começar.</div>
 
@@ -2002,9 +2002,10 @@ function renderSummary(){
   const needed=defDays?remaining/defDays:0;
   const projected=records.length?avg*7:0;
 
-  $("heroRemaining").textContent=fmt(remaining)+" kcal";
+  $("heroLabel").textContent=goal>0 ? "Falta para a meta" : "Meta semanal";
+  $("heroRemaining").textContent=goal>0 ? fmt(remaining)+" kcal" : "—";
   $("homeDone").textContent=fmt(done)+" kcal";
-  $("homeGoal").textContent=fmt(goal)+" kcal";
+  $("homeGoal").textContent=goal>0 ? fmt(goal)+" kcal" : "—";
   $("homeAvg").textContent=fmt(avg)+" kcal";
 
   $("projectedDeficit").textContent=fmt(projected)+" kcal";
@@ -2015,11 +2016,11 @@ function renderSummary(){
   if(!state.profile){
     $("heroText").textContent="Configure seu perfil para começar.";
   }else if(!goal){
-    $("heroText").textContent="Seu gasto já está calculado. Agora defina uma meta semanal.";
+    $("heroText").textContent="Defina uma meta semanal para calcular quanto ainda falta.";
   }else if(remaining<=0){
     $("heroText").textContent="Meta semanal atingida.";
   }else{
-    $("heroText").textContent="Você já acumulou "+fmt(done)+" kcal de déficit nesta semana.";
+    $("heroText").textContent="Você já acumulou "+fmt(done)+" kcal de déficit nesta semana e faltam "+fmt(remaining)+" kcal para a meta.";
   }
 
   $("weekDeficit").textContent=fmt(done)+" kcal";
