@@ -1055,6 +1055,15 @@ canvas{
       <small>Meta e dias de manutenção</small>
     </button>
 
+    <button class="quick-btn kcal-shortcut" id="syncCaloriesHome">
+      <span class="quick-kcal-icon">🔄</span>
+      <span>
+        <b>Sincronizar calorias</b>
+        <small id="syncCaloriesHomeStatus">Atualizar as kcal consumidas agora</small>
+      </span>
+      <span class="quick-arrow">↻</span>
+    </button>
+
     <button class="quick-btn kcal-shortcut" id="openCaloriesApp">
       <span class="quick-kcal-icon">🍽️</span>
       <span>
@@ -2386,6 +2395,28 @@ $("menuBtn").onclick=openMenu;
 $("menuClose").onclick=closeMenu;
 $("menuModal").onclick=e=>{if(e.target===$("menuModal"))closeMenu()};
 $("plusBtn").onclick=()=>showPage("record");
+$("syncCaloriesHome").onclick=()=>{
+  const result=syncCaloriesFromCalorieApp({manual:true,rerender:true});
+  const status=$("syncCaloriesHomeStatus");
+  if(!status)return;
+
+  if(result?.reason==="not-found"){
+    status.textContent="Dados do Contagem de Calorias não encontrados";
+  }else if(result?.reason==="no-profile"){
+    status.textContent="Configure seu perfil para calcular o déficit";
+  }else if(result?.changed){
+    const total=(result.imported||0)+(result.updated||0)+(result.removed||0);
+    status.textContent=total>0 ? total+" dia(s) atualizado(s)" : "Sincronizado";
+  }else{
+    status.textContent="Já estava tudo atualizado";
+  }
+
+  setTimeout(()=>{
+    const homeStatus=$("syncCaloriesHomeStatus");
+    if(homeStatus)homeStatus.textContent="Atualizar as kcal consumidas agora";
+  },2500);
+};
+
 $("openCaloriesApp").onclick=()=>{location.href="https://kaua212106.github.io/Contagem-de-calorias-/";};
 
 document.querySelectorAll("[data-page]").forEach(btn=>{
