@@ -744,6 +744,57 @@ input:focus,select:focus,textarea:focus{
   margin-bottom:12px;
 }
 
+.calendar-total{
+  display:grid;
+  grid-template-columns:1.35fr .9fr;
+  gap:9px;
+  margin-bottom:15px;
+}
+
+.calendar-total-main,
+.calendar-total-kg{
+  border:1px solid #eef1f6;
+  border-radius:16px;
+  background:#f8f9fc;
+  padding:13px 12px;
+}
+
+.calendar-total-main small,
+.calendar-total-kg small{
+  display:block;
+  color:var(--text2);
+  font-size:10px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.calendar-total-main b{
+  display:block;
+  color:var(--primary);
+  font-size:22px;
+  letter-spacing:-.5px;
+}
+
+.calendar-total-kg b{
+  display:block;
+  color:#22a06b;
+  font-size:20px;
+  letter-spacing:-.4px;
+}
+
+.calendar-total-note{
+  grid-column:1/-1;
+  color:var(--text2);
+  font-size:10px;
+  line-height:1.4;
+  margin-top:-2px;
+}
+
+@media(max-width:360px){
+  .calendar-total{grid-template-columns:1fr}
+  .calendar-total-note{grid-column:auto}
+}
+
 .calendar-top button{
   width:40px;
   height:40px;
@@ -1003,7 +1054,7 @@ canvas{
 
     <div class="contador green">
       <span id="homeAvg">0 kcal</span>
-      <small>Média real</small>
+      <small>Déficit médio/dia</small>
     </div>
 
     <div class="contador">
@@ -1204,6 +1255,22 @@ canvas{
   </div>
 
   <div class="card">
+    <div class="calendar-total">
+      <div class="calendar-total-main">
+        <small>Déficit total acumulado</small>
+        <b id="calendarTotalKcal">0 kcal</b>
+      </div>
+
+      <div class="calendar-total-kg">
+        <small>Equivalente teórico</small>
+        <b id="calendarTotalKg">≈ 0,00 kg</b>
+      </div>
+
+      <div class="calendar-total-note">
+        Soma de todos os registros do app. Superávits reduzem o total. A equivalência usa 7.700 kcal ≈ 1 kg como referência matemática.
+      </div>
+    </div>
+
     <div class="calendar-top">
       <button id="prevMonth">‹</button>
       <div class="calendar-title" id="calendarTitle">—</div>
@@ -2209,6 +2276,10 @@ function renderWeights(){
 let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 
 function renderCalendar(){
+  const totalDeficit=Object.values(state.records||{}).reduce((sum,r)=>sum+Number(r.deficit||0),0);
+  $("calendarTotalKcal").textContent=fmt(totalDeficit)+" kcal";
+  $("calendarTotalKg").textContent="≈ "+fmtKg(totalDeficit/7700)+" kg";
+
   $("calendarTitle").textContent=calendarCursor.toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
 
   const y=calendarCursor.getFullYear();
