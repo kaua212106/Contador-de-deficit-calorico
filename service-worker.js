@@ -1,10 +1,11 @@
-const CACHE_NAME = "meta-deficit-v1";
+const CACHE_NAME = "meta-deficit-v2-central-sync";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icone.png",
-  "./auth-guard-v3.js"
+  "./auth-guard-v3.js",
+  "./central-sync.js"
 ];
 
 self.addEventListener("install", event => {
