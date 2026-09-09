@@ -1,0 +1,2832 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#667eea">
+<link rel="manifest" href="manifest.json">
+
+<style>
+html.central-guard-lock body{
+  visibility:hidden!important;
+}
+
+#centralGuardLoading,
+#centralGuardBlocked{
+  position:fixed;
+  inset:0;
+  z-index:2147483647;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:linear-gradient(145deg,#667eea,#764ba2);
+  font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+
+#centralGuardLoading{
+  visibility:visible!important;
+}
+
+.central-guard-loading-box,
+.central-guard-block-box{
+  width:min(430px,100%);
+  background:#fff;
+  border-radius:26px;
+  padding:24px 20px;
+  text-align:center;
+  box-shadow:0 25px 70px rgba(0,0,0,.25);
+  color:#20283a;
+}
+
+.central-guard-spinner{
+  width:42px;
+  height:42px;
+  margin:0 auto 14px;
+  border:4px solid #e6e9f5;
+  border-top-color:#667eea;
+  border-radius:50%;
+  animation:centralGuardSpin .8s linear infinite;
+}
+
+@keyframes centralGuardSpin{
+  to{transform:rotate(360deg)}
+}
+
+.central-guard-loading-box b{
+  display:block;
+  font-size:18px;
+}
+
+.central-guard-loading-box small{
+  display:block;
+  margin-top:5px;
+  color:#687187;
+  font-size:10px;
+}
+
+.central-guard-block-box .central-guard-lock-icon{
+  font-size:42px;
+  margin-bottom:8px;
+}
+
+.central-guard-block-box h2{
+  margin:0 0 8px;
+  font-size:23px;
+}
+
+.central-guard-block-box p{
+  margin:0;
+  color:#687187;
+  font-size:12px;
+  line-height:1.55;
+}
+
+.central-guard-block-box button{
+  width:100%;
+  min-height:50px;
+  margin-top:16px;
+  border:0;
+  border-radius:14px;
+  background:linear-gradient(135deg,#667eea,#5363dc);
+  color:#fff;
+  font-size:13px;
+  font-weight:850;
+}
+
+.central-guard-block-box small{
+  display:block;
+  margin-top:10px;
+  color:#a0a6b4;
+  font-size:9px;
+}
+</style>
+
+<script>
+document.documentElement.classList.add("central-guard-lock");
+</script>
+
+<script src="auth-guard-v3.js"></script>
+<script>window.CENTRAL_SYNC_CONFIG={"appId":"deficit-calorico","localStorageKeys":["metaDeficit_v3","metaDeficit_v2","metaDeficit_v1"],"indexedDB":[],"debounceMs":1400};</script>
+<script src="central-sync.js"></script>
+
+<title>Meta de Déficit</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+  --primary:#667eea;
+  --primary2:#764ba2;
+  --primaryStrong:#5363dc;
+  --primarySoft:rgba(102,116,232,.11);
+  --green:#10b981;
+  --orange:#f59e0b;
+  --red:#ef4444;
+
+  --text:#20283a;
+  --text2:#687187;
+  --text3:#98a0b2;
+
+  --surface:rgba(255,255,255,.95);
+  --surfaceSolid:#fff;
+  --surface2:#f7f8fc;
+  --border:rgba(31,41,55,.08);
+
+  --shadowSm:0 4px 14px rgba(27,33,62,.06);
+  --shadowMd:0 12px 30px rgba(27,33,62,.10);
+  --shadowLg:0 22px 60px rgba(20,25,55,.20);
+
+  --radiusSm:12px;
+  --radiusMd:18px;
+  --radiusLg:24px;
+}
+
+html{
+  background:#eef2ff;
+  scroll-behavior:smooth;
+}
+
+body{
+  max-width:650px;
+  min-height:100vh;
+  margin:0 auto;
+  padding:102px 16px 96px;
+  color:var(--text);
+  position:relative;
+  isolation:isolate;
+  background:
+    radial-gradient(circle at 12% 8%,rgba(255,255,255,.42) 0 7%,transparent 24%),
+    radial-gradient(circle at 88% 18%,rgba(139,92,246,.23) 0 8%,transparent 28%),
+    radial-gradient(circle at 72% 78%,rgba(59,130,246,.18) 0 7%,transparent 30%),
+    linear-gradient(145deg,var(--primary) 0%,#6556c9 45%,#734ca8 100%);
+  background-attachment:fixed;
+}
+
+body::before,
+body::after{
+  content:"";
+  position:fixed;
+  z-index:-1;
+  pointer-events:none;
+  border-radius:999px;
+}
+
+body::before{
+  width:330px;
+  height:330px;
+  top:-120px;
+  left:-145px;
+  background:linear-gradient(135deg,rgba(255,255,255,.18),rgba(255,255,255,.035));
+  border:1px solid rgba(255,255,255,.13);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16);
+}
+
+body::after{
+  width:410px;
+  height:410px;
+  right:-230px;
+  bottom:70px;
+  background:linear-gradient(135deg,rgba(255,255,255,.09),rgba(255,255,255,.018));
+  border:1px solid rgba(255,255,255,.08);
+}
+
+button,input,select,textarea{font:inherit;outline:none}
+button{border:0;cursor:pointer;transition:.18s}
+button:active{transform:scale(.975)}
+textarea{resize:vertical}
+.hidden{display:none!important}
+
+/* TOPO */
+.barra-topo{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  height:78px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 max(18px,calc((100vw - 650px)/2 + 18px));
+  background:linear-gradient(180deg,rgba(55,48,130,.48),rgba(74,63,157,.22));
+  border-bottom:1px solid rgba(255,255,255,.14);
+  box-shadow:0 10px 30px rgba(25,22,75,.10);
+  backdrop-filter:blur(18px) saturate(135%);
+  -webkit-backdrop-filter:blur(18px) saturate(135%);
+  z-index:100;
+}
+
+.botao-menu,.botao-mais{
+  width:44px;
+  height:44px;
+  min-width:44px;
+  border-radius:14px;
+  background:rgba(255,255,255,.95);
+  color:#38405a;
+  border:1px solid rgba(255,255,255,.56);
+  box-shadow:0 6px 16px rgba(24,29,72,.12),inset 0 1px 0 rgba(255,255,255,.70);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:850;
+}
+
+.botao-menu{font-size:21px}
+.botao-mais{font-size:27px;color:var(--primary)}
+
+.titulo-topo{
+  color:#fff;
+  font-size:18px;
+  font-weight:750;
+  letter-spacing:-.35px;
+  text-shadow:0 1px 8px rgba(24,27,66,.14);
+  display:flex;
+  align-items:center;
+  gap:9px;
+  text-align:center;
+}
+
+.brand-mark{
+  width:31px;
+  height:31px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
+  font-size:17px;
+}
+
+/* PÁGINAS */
+.page{display:none}
+.page.active{display:block;animation:pageIn .18s ease}
+@keyframes pageIn{
+  from{opacity:.55;transform:translateY(5px)}
+  to{opacity:1;transform:none}
+}
+
+.page-head{
+  color:#fff;
+  margin:2px 2px 16px;
+}
+
+.page-head h2{
+  font-size:24px;
+  letter-spacing:-.5px;
+  margin-bottom:4px;
+}
+
+.page-head p{
+  font-size:12px;
+  line-height:1.45;
+  opacity:.9;
+}
+
+/* CARDS */
+.card{
+  border:1px solid var(--border);
+  border-radius:var(--radiusLg);
+  padding:21px 18px;
+  margin-bottom:16px;
+  background:var(--surface);
+  box-shadow:var(--shadowMd);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+}
+
+.section-title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.section-title h2{
+  font-size:19px;
+  font-weight:760;
+  letter-spacing:-.45px;
+}
+
+.section-title h3{
+  font-size:17px;
+  font-weight:740;
+  letter-spacing:-.35px;
+}
+
+.badge{
+  display:inline-block;
+  font-size:11px;
+  padding:4px 8px;
+  border-radius:20px;
+  background:#e8ebff;
+  color:#4f46c5;
+  font-weight:bold;
+  white-space:nowrap;
+}
+
+/* HOME */
+.hero-card{
+  position:relative;
+  overflow:hidden;
+  padding:22px 20px;
+  margin-bottom:16px;
+  border-radius:24px;
+  background:rgba(255,255,255,.96);
+  border:1px solid rgba(255,255,255,.66);
+  box-shadow:var(--shadowMd);
+}
+
+.hero-card::after{
+  content:"";
+  position:absolute;
+  width:160px;
+  height:160px;
+  border-radius:50%;
+  top:-78px;
+  right:-55px;
+  background:linear-gradient(135deg,rgba(102,126,234,.14),rgba(118,75,162,.08));
+}
+
+.hero-label{
+  font-size:10px;
+  text-transform:uppercase;
+  color:var(--text2);
+  font-weight:800;
+  letter-spacing:.5px;
+}
+
+.hero-number{
+  position:relative;
+  z-index:1;
+  font-size:36px;
+  letter-spacing:-1.2px;
+  color:var(--primary);
+  margin:5px 0 4px;
+}
+
+.hero-text{
+  position:relative;
+  z-index:1;
+  color:var(--text2);
+  font-size:12px;
+  line-height:1.45;
+}
+
+.progress{
+  height:11px;
+  background:#eceef4;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:16px;
+}
+
+.progress>div{
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,var(--primary),#7f65d5);
+  border-radius:20px;
+  transition:width .3s;
+}
+
+.progress-head{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:8px;
+  color:var(--text2);
+  font-size:10px;
+}
+
+.contadores{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.contador{
+  position:relative;
+  overflow:hidden;
+  border:1px solid var(--border);
+  box-shadow:var(--shadowSm);
+  border-radius:17px;
+  padding:15px 8px 13px;
+  background:var(--surface);
+  backdrop-filter:blur(16px);
+  text-align:center;
+  font-size:11px;
+  font-weight:650;
+  color:var(--text2);
+}
+
+.contador::before{
+  content:"";
+  position:absolute;
+  left:14px;
+  right:14px;
+  top:0;
+  height:2px;
+  border-radius:0 0 99px 99px;
+  background:currentColor;
+  opacity:.38;
+}
+
+.contador span{
+  display:block;
+  font-size:25px;
+  letter-spacing:-.8px;
+  margin-bottom:3px;
+  color:var(--primary);
+  font-weight:850;
+}
+
+.contador small{
+  font-size:10px;
+  color:var(--text2);
+  letter-spacing:.2px;
+  text-transform:uppercase;
+}
+
+.contador.green span{color:#22a06b}
+.contador.orange span{color:#e59b22}
+
+.quick-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  margin-bottom:16px;
+}
+
+.quick-btn{
+  width:100%;
+  min-height:82px;
+  border-radius:16px;
+  padding:13px;
+  background:rgba(255,255,255,.94);
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:var(--shadowSm);
+  color:var(--text);
+  text-align:left;
+}
+
+.quick-btn b{
+  display:block;
+  font-size:13px;
+  margin-top:8px;
+}
+
+.quick-btn small{
+  display:block;
+  color:var(--text2);
+  margin-top:3px;
+  font-size:10px;
+}
+
+.quick-btn.kcal-shortcut{
+  grid-column:1/-1;
+  min-height:70px;
+  display:grid;
+  grid-template-columns:42px 1fr auto;
+  align-items:center;
+  gap:11px;
+}
+
+.quick-btn.kcal-shortcut .quick-kcal-icon{
+  width:42px;
+  height:42px;
+  border-radius:13px;
+  display:grid;
+  place-items:center;
+  background:var(--primarySoft);
+  color:var(--primary);
+  font-size:20px;
+}
+
+.quick-btn.kcal-shortcut b{
+  margin-top:0;
+}
+
+.quick-btn.kcal-shortcut .quick-arrow{
+  color:var(--primary);
+  font-size:21px;
+  font-weight:850;
+}
+
+/* FORM */
+.field-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+
+.field.full{grid-column:1/-1}
+
+label{
+  display:block;
+  margin:15px 0 7px;
+  color:#4f596e;
+  font-size:13px;
+  font-weight:680;
+}
+
+input,select,textarea{
+  width:100%;
+  min-height:50px;
+  padding:13px 14px;
+  border:1px solid #e1e5ed;
+  border-radius:14px;
+  background:#f8f9fc;
+  color:var(--text);
+  font-size:15px;
+  transition:.18s;
+}
+
+textarea{min-height:92px}
+
+input[type=checkbox]{width:20px;height:20px;min-height:20px;accent-color:var(--primary)}
+
+input:focus,select:focus,textarea:focus{
+  border-color:rgba(102,116,232,.55);
+  background:#fff;
+  box-shadow:0 0 0 4px rgba(102,116,232,.09)!important;
+}
+
+.tabs{
+  display:flex;
+  background:#f0f2f6;
+  border:1px solid #e8eaf0;
+  border-radius:12px;
+  padding:4px;
+  margin-bottom:13px;
+  gap:3px;
+}
+
+.tab{
+  flex:1;
+  padding:10px 6px;
+  border-radius:9px;
+  background:transparent;
+  font-weight:bold;
+  color:#697286;
+  font-size:11px;
+}
+
+.tab.active{
+  background:#fff;
+  color:var(--primary);
+  box-shadow:0 3px 9px rgba(27,33,62,.07);
+}
+
+.btn{
+  width:100%;
+  min-height:48px;
+  padding:13px 14px;
+  border-radius:14px;
+  font-size:14px;
+  font-weight:740;
+  margin-top:10px;
+}
+
+.btn-primary{
+  color:#fff;
+  background:linear-gradient(135deg,var(--primary),#5363dc);
+  box-shadow:0 8px 18px rgba(83,99,220,.20);
+}
+
+.btn-neutral{
+  background:#f1f3f7;
+  color:#465066;
+  border:1px solid #e4e7ee;
+}
+
+.btn-red{
+  color:#fff;
+  background:#d94c4c;
+}
+
+.mini-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+
+.mini{
+  background:#f8f9fc;
+  border:1px solid #eef1f6;
+  border-radius:14px;
+  padding:11px;
+  text-align:center;
+}
+
+.mini b{
+  display:block;
+  font-size:17px;
+  color:var(--primary);
+  margin-top:3px;
+}
+
+.mini small{
+  color:var(--text2);
+  font-size:10px;
+}
+
+.note-box{
+  padding:10px 12px;
+  border-radius:12px;
+  background:#eef0ff;
+  margin-top:10px;
+  font-size:12px;
+  line-height:1.45;
+  color:#505d9a;
+}
+
+.note-box.warn{
+  background:#fff7ed;
+  color:#7c5518;
+}
+
+/* PLANEJAMENTO */
+.plan-week{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding:3px 0 9px;
+  scrollbar-width:none;
+}
+
+.plan-week::-webkit-scrollbar{display:none}
+
+.plan-day{
+  flex:0 0 76px;
+  border:1px solid #e8ebf2;
+  border-radius:14px;
+  padding:10px 6px;
+  background:#f7f8fc;
+  text-align:center;
+  color:#555;
+}
+
+.plan-day.active{
+  background:linear-gradient(145deg,var(--primary),#7283ee);
+  color:#fff;
+  box-shadow:0 7px 17px rgba(83,99,220,.20);
+}
+
+.plan-day b,.plan-day small{display:block}
+.plan-day small{font-size:9px;margin-top:4px}
+
+/* HISTÓRICO */
+.history-list{display:grid;gap:8px}
+
+.history-item{
+  padding:12px;
+  border:1px solid #edf0f5;
+  border-radius:15px;
+  background:linear-gradient(180deg,#fff,#fbfcfe);
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+  align-items:center;
+}
+
+.history-item b{font-size:13px}
+.history-item small{
+  display:block;
+  color:var(--text2);
+  font-size:10px;
+  line-height:1.4;
+  margin-top:3px;
+}
+
+.history-value{
+  color:var(--primary);
+  font-size:12px;
+  font-weight:850;
+  text-align:right;
+}
+
+.inline-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:6px;
+  margin-top:6px;
+}
+
+.small-btn{
+  padding:7px 9px;
+  border-radius:9px;
+  background:#eef0ff;
+  color:var(--primary);
+  font-size:10px;
+  font-weight:bold;
+}
+
+.small-btn.del{
+  background:#fee2e2;
+  color:#dc2626;
+}
+
+/* CALENDÁRIO */
+.calendar-top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.calendar-total{
+  display:grid;
+  grid-template-columns:1.35fr .9fr;
+  gap:9px;
+  margin-bottom:15px;
+}
+
+.calendar-total-main,
+.calendar-total-kg{
+  border:1px solid #eef1f6;
+  border-radius:16px;
+  background:#f8f9fc;
+  padding:13px 12px;
+}
+
+.calendar-total-main small,
+.calendar-total-kg small{
+  display:block;
+  color:var(--text2);
+  font-size:10px;
+  font-weight:700;
+  margin-bottom:4px;
+}
+
+.calendar-total-main b{
+  display:block;
+  color:var(--primary);
+  font-size:22px;
+  letter-spacing:-.5px;
+}
+
+.calendar-total-kg b{
+  display:block;
+  color:#22a06b;
+  font-size:20px;
+  letter-spacing:-.4px;
+}
+
+.calendar-total-note{
+  grid-column:1/-1;
+  color:var(--text2);
+  font-size:10px;
+  line-height:1.4;
+  margin-top:-2px;
+}
+
+@media(max-width:360px){
+  .calendar-total{grid-template-columns:1fr}
+  .calendar-total-note{grid-column:auto}
+}
+
+.calendar-top button{
+  width:40px;
+  height:40px;
+  border-radius:13px;
+  border:1px solid #e8eaf0;
+  background:#f6f7fa;
+  color:var(--primary);
+  font-size:23px;
+}
+
+.calendar-title{
+  font-size:14px;
+  font-weight:800;
+  text-transform:capitalize;
+}
+
+.calendar-grid{
+  display:grid;
+  grid-template-columns:repeat(7,1fr);
+  gap:5px;
+}
+
+.calendar-head{
+  text-align:center;
+  font-size:11px;
+  font-weight:bold;
+  color:var(--primary);
+}
+
+.calendar-day{
+  min-height:54px;
+  border-radius:12px;
+  border:1px solid #edf0f5;
+  background:#f7f8fc;
+  padding:6px;
+  position:relative;
+  font-size:11px;
+}
+
+.calendar-day.empty{border-color:transparent;background:transparent}
+.calendar-day.good{background:#dcfce7;border-color:#22c55e}
+.calendar-day.maint{background:#f1f3f7}
+.calendar-day.over{background:#fee2e2;border-color:#ef4444}
+.calendar-day .status{
+  position:absolute;
+  left:5px;right:5px;bottom:5px;
+  font-size:8px;
+  color:var(--text2);
+  line-height:1.1;
+}
+
+/* GRÁFICO */
+.chart-box{
+  width:100%;
+  height:190px;
+  background:#f8f9fc;
+  border:1px solid #eef1f6;
+  border-radius:16px;
+  padding:8px;
+}
+
+canvas{
+  width:100%;
+  height:100%;
+  display:block;
+}
+
+/* PESO */
+.weight-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  padding:10px 0;
+  border-bottom:1px solid #edf0f5;
+}
+
+.weight-row:last-child{border-bottom:0}
+
+/* MENU */
+.menu-modal,.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(13,18,31,.52);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  z-index:4000;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+}
+
+.menu-modal.open,.modal.open{display:flex}
+
+.menu-box,.modal-box{
+  width:min(430px,100%);
+  max-height:90vh;
+  overflow:auto;
+  border:1px solid rgba(255,255,255,.58);
+  box-shadow:var(--shadowLg);
+  background:rgba(255,255,255,.98);
+  border-radius:24px;
+  padding:23px 20px;
+}
+
+.menu-box h2{
+  font-size:24px;
+  font-weight:760;
+  letter-spacing:-.5px;
+  margin-bottom:18px;
+}
+
+.menu-item{
+  width:100%;
+  height:50px;
+  border-radius:13px;
+  font-size:14px;
+  font-weight:bold;
+  margin-bottom:9px;
+  padding:0 16px;
+  text-align:left;
+  color:#fff;
+}
+
+.menu-page{background:#5b71d8}
+.menu-calendar{background:#4286c6}
+.menu-profile{background:#7660d7}
+.menu-export{background:#5b71d8}
+.menu-import{background:#27815c}
+.menu-delete{background:#d94c4c}
+.menu-close{background:#38405a;text-align:center}
+
+/* BARRA INFERIOR */
+.bottom{
+  position:fixed;
+  left:50%;
+  right:auto;
+  transform:translateX(-50%);
+  bottom:10px;
+  width:min(590px,calc(100% - 18px));
+  height:66px;
+  padding:6px;
+  gap:3px;
+  border-radius:21px;
+  overflow:hidden;
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(255,255,255,.68);
+  backdrop-filter:blur(22px) saturate(150%);
+  -webkit-backdrop-filter:blur(22px) saturate(150%);
+  box-shadow:0 14px 38px rgba(24,29,62,.17),inset 0 1px 0 rgba(255,255,255,.78);
+  display:flex;
+  z-index:1000;
+}
+
+.nav{
+  flex:1;
+  position:relative;
+  height:54px;
+  border-radius:15px;
+  color:#858da1;
+  background:transparent;
+  font-size:10px;
+  font-weight:720;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+}
+
+.nav span{font-size:21px;line-height:1}
+
+.nav.active{
+  color:var(--primary);
+  background:rgba(102,116,232,.10);
+}
+
+.nav.active::after{
+  content:"";
+  position:absolute;
+  bottom:3px;
+  width:18px;
+  height:2px;
+  border-radius:99px;
+  background:currentColor;
+  opacity:.72;
+}
+
+.empty-state{
+  text-align:center;
+  color:var(--text3);
+  padding:25px 12px;
+  font-size:13px;
+  font-style:italic;
+}
+
+@media(max-width:500px){
+  body{padding:96px 13px 92px}
+  .barra-topo{height:76px;padding:0 15px}
+  .titulo-topo{font-size:17px}
+  .brand-mark{width:29px;height:29px}
+  .card{padding:18px 15px;border-radius:20px;margin-bottom:14px}
+  .bottom{bottom:8px;width:calc(100% - 14px);height:64px;border-radius:18px}
+  .nav{height:52px;font-size:9px}.nav span{font-size:20px}
+}
+
+@media(max-width:390px){
+  .field-grid{grid-template-columns:1fr}
+  .field.full{grid-column:auto}
+  .contadores{gap:8px}
+  .contador span{font-size:22px}
+}
+</style>
+</head>
+
+<body>
+
+<header class="barra-topo">
+  <button class="botao-menu" id="menuBtn">☰</button>
+
+  <div class="titulo-topo">
+    <span class="brand-mark">⚡</span>
+    <span id="topTitle">Meta de Déficit</span>
+  </div>
+
+  <button class="botao-mais" id="plusBtn">＋</button>
+</header>
+
+<!-- INÍCIO -->
+<section class="page active" id="page-home">
+  <div class="hero-card">
+    <div class="hero-label" id="heroLabel">Falta para a meta</div>
+    <div class="hero-number" id="heroRemaining">0 kcal</div>
+    <div class="hero-text" id="heroText">Configure seu perfil e sua meta para começar.</div>
+
+    <div class="progress">
+      <div id="heroProgress"></div>
+    </div>
+
+    <div class="progress-head">
+      <span id="heroPct">0%</span>
+      <span id="heroWeekRange">—</span>
+    </div>
+  </div>
+
+  <div class="contadores">
+    <div class="contador">
+      <span id="homeDone">0 kcal</span>
+      <small>Déficit acumulado</small>
+    </div>
+
+    <div class="contador orange">
+      <span id="homeGoal">0 kcal</span>
+      <small>Meta semanal</small>
+    </div>
+
+    <div class="contador green">
+      <span id="homeAvg">0 kcal</span>
+      <small>Déficit médio/dia</small>
+    </div>
+
+    <div class="contador">
+      <span id="homeTdee">—</span>
+      <small>Gasto diário</small>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2>📈 Projeção da semana</h2>
+      <span class="badge" id="streakBadge">0 semanas</span>
+    </div>
+
+    <div class="mini-grid">
+      <div class="mini">
+        <small>Projeção atual</small>
+        <b id="projectedDeficit">0 kcal</b>
+      </div>
+      <div class="mini">
+        <small>Equivalente teórico</small>
+        <b id="projectedKg">0,00 kg</b>
+      </div>
+      <div class="mini">
+        <small>Média necessária</small>
+        <b id="neededAvg">0 kcal</b>
+      </div>
+      <div class="mini">
+        <small>Manutenções</small>
+        <b id="maintenanceCount">0</b>
+      </div>
+    </div>
+
+    <div class="note-box" id="projectionNote">
+      A média necessária é recalculada automaticamente conforme os registros da semana.
+    </div>
+  </div>
+
+  <div class="quick-grid">
+    <button class="quick-btn" data-page="record">
+      <span>➕</span>
+      <b>Registrar hoje</b>
+      <small>Consumo, déficit ou manutenção</small>
+    </button>
+
+    <button class="quick-btn" data-page="plan">
+      <span>🗓️</span>
+      <b>Planejar semana</b>
+      <small>Meta e dias de manutenção</small>
+    </button>
+
+    <button class="quick-btn kcal-shortcut" id="syncCaloriesHome">
+      <span class="quick-kcal-icon">🔄</span>
+      <span>
+        <b>Sincronizar calorias</b>
+        <small id="syncCaloriesHomeStatus">Atualizar as kcal consumidas agora</small>
+      </span>
+      <span class="quick-arrow">↻</span>
+    </button>
+
+    <button class="quick-btn kcal-shortcut" id="openCaloriesApp">
+      <span class="quick-kcal-icon">🍽️</span>
+      <span>
+        <b>Contagem de Calorias</b>
+        <small>Abrir rapidamente o app de kcal</small>
+      </span>
+      <span class="quick-arrow">›</span>
+    </button>
+  </div>
+</section>
+
+<!-- PLANEJAMENTO -->
+<section class="page" id="page-plan">
+  <div class="page-head">
+    <h2>Planejamento</h2>
+    <p>Defina sua meta semanal e quais dias serão de déficit ou manutenção.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2>🎯 Meta semanal</h2>
+      <span class="badge">7.700 kcal ≈ 1 kg</span>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" id="goalKcalTab">Meta em kcal</button>
+      <button class="tab" id="goalKgTab">Meta em kg</button>
+    </div>
+
+    <div id="goalKcalBox">
+      <label for="goalKcal">Déficit total na semana</label>
+      <input id="goalKcal" type="number" min="0" step="50" placeholder="Ex.: 2500">
+    </div>
+
+    <div id="goalKgBox" class="hidden">
+      <label for="goalKg">Equivalente teórico por semana</label>
+      <input id="goalKg" type="number" min="0" step="0.01" placeholder="Ex.: 0,25">
+    </div>
+
+    <button class="btn btn-primary" id="saveGoal">Salvar meta</button>
+    <div class="note-box warn hidden" id="goalWarning"></div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2>🗓️ Dias da semana</h2>
+      <span class="badge">Toque para alternar</span>
+    </div>
+
+    <div class="plan-week" id="planDays"></div>
+
+    <div class="mini-grid">
+      <div class="mini">
+        <small>Dias de déficit</small>
+        <b id="planDeficitDays">7</b>
+      </div>
+      <div class="mini">
+        <small>Meta por dia de déficit</small>
+        <b id="planPerDay">0 kcal</b>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="savePlan">Salvar planejamento</button>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2>📌 Situação atual</h2>
+      <span class="badge" id="weekRange">—</span>
+    </div>
+
+    <div class="mini-grid">
+      <div class="mini"><small>Acumulado</small><b id="weekDeficit">0 kcal</b></div>
+      <div class="mini"><small>Falta</small><b id="weekRemaining">0 kcal</b></div>
+      <div class="mini"><small>Dias restantes</small><b id="daysLeft">0</b></div>
+      <div class="mini"><small>Média ajustada</small><b id="dailyNeeded">0 kcal</b></div>
+    </div>
+
+    <div class="note-box" id="weekMessage">Configure uma meta para acompanhar o progresso.</div>
+  </div>
+</section>
+
+<!-- REGISTRAR -->
+<section class="page" id="page-record">
+  <div class="page-head">
+    <h2>Registrar dia</h2>
+    <p>Adicione o consumo, informe o déficit diretamente ou marque manutenção.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2 id="recordTitle">➕ Novo registro</h2>
+      <span class="badge" id="todayLabel">Hoje</span>
+    </div>
+
+    <label for="recordDate">Data</label>
+    <input id="recordDate" type="date">
+
+    <div class="tabs" style="margin-top:13px">
+      <button class="tab active" id="intakeTab">Consumo</button>
+      <button class="tab" id="deficitTab">Déficit</button>
+      <button class="tab" id="maintenanceTab">Manutenção</button>
+    </div>
+
+    <div id="intakeBox">
+      <label for="intake">Calorias consumidas</label>
+      <input id="intake" type="number" min="0" step="1" placeholder="Ex.: 1900">
+    </div>
+
+    <div id="deficitBox" class="hidden">
+      <label for="directDeficit">Déficit do dia</label>
+      <input id="directDeficit" type="number" step="1" placeholder="Ex.: 400">
+    </div>
+
+    <div id="maintenanceBox" class="note-box hidden">
+      <b>⚖️ Dia de manutenção</b><br>
+      O app considera consumo igual ao gasto estimado e déficit de 0 kcal.
+    </div>
+
+    <label for="note">Observação do dia</label>
+    <textarea id="note" placeholder="Ex.: treino pesado, festa, manutenção planejada..."></textarea>
+
+    <div class="mini-grid">
+      <div class="mini"><small>Gasto usado</small><b id="recordTdee">—</b></div>
+      <div class="mini"><small>Déficit calculado</small><b id="previewDeficit">—</b></div>
+    </div>
+
+    <button class="btn btn-primary" id="saveRecord">Salvar registro</button>
+    <button class="btn btn-neutral hidden" id="cancelEdit">Cancelar edição</button>
+  </div>
+</section>
+
+<!-- CALENDÁRIO -->
+<section class="page" id="page-calendar">
+  <div class="page-head">
+    <h2>Calendário</h2>
+    <p>Veja déficit, manutenção, superávit e dias sem registro.</p>
+  </div>
+
+  <div class="card">
+    <div class="calendar-total">
+      <div class="calendar-total-main">
+        <small>Déficit total acumulado</small>
+        <b id="calendarTotalKcal">0 kcal</b>
+      </div>
+
+      <div class="calendar-total-kg">
+        <small>Equivalente teórico</small>
+        <b id="calendarTotalKg">≈ 0,00 kg</b>
+      </div>
+
+      <div class="calendar-total-note">
+        Soma de todos os registros do app. Superávits reduzem o total. A equivalência usa 7.700 kcal ≈ 1 kg como referência matemática.
+      </div>
+    </div>
+
+    <div class="calendar-top">
+      <button id="prevMonth">‹</button>
+      <div class="calendar-title" id="calendarTitle">—</div>
+      <button id="nextMonth">›</button>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+  </div>
+</section>
+
+<!-- HISTÓRICO -->
+<section class="page" id="page-history">
+  <div class="page-head">
+    <h2>Histórico</h2>
+    <p>Registros diários, gráfico e resumo por semanas.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2>📊 Gráfico da semana</h2>
+      <span class="badge">Acumulado</span>
+    </div>
+    <div class="chart-box">
+      <canvas id="deficitChart"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2>📋 Esta semana</h2>
+      <span class="badge" id="historyCount">0 dias</span>
+    </div>
+    <div class="history-list" id="historyList">
+      <div class="empty-state">Nenhum dia registrado ainda.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2>🗂️ Semanas anteriores</h2>
+      <span class="badge" id="weeksCount">0</span>
+    </div>
+    <div class="history-list" id="weeklyHistory">
+      <div class="empty-state">Nenhuma semana fechada ainda.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PERFIL -->
+<section class="page" id="page-profile">
+  <div class="page-head">
+    <h2>Perfil e peso</h2>
+    <p>Atualize seus dados físicos e acompanhe seu peso real.</p>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2>👤 Dados físicos</h2>
+      <span class="badge" id="ageBadge">Não configurado</span>
+    </div>
+
+    <div class="field-grid">
+      <div>
+        <label for="weight">Peso atual (kg)</label>
+        <input id="weight" type="number" min="20" max="300" step="0.1" placeholder="Ex.: 65">
+      </div>
+
+      <div>
+        <label for="height">Altura (cm)</label>
+        <input id="height" type="number" min="100" max="230" step="1" placeholder="Ex.: 170">
+      </div>
+
+      <div>
+        <label for="age">Idade</label>
+        <input id="age" type="number" min="10" max="100" step="1" placeholder="Ex.: 15">
+      </div>
+
+      <div>
+        <label for="sex">Sexo biológico</label>
+        <select id="sex">
+          <option value="">Selecione</option>
+          <option value="male">Masculino</option>
+          <option value="female">Feminino</option>
+        </select>
+      </div>
+
+      <div class="field full">
+        <label for="activity">Nível de atividade</label>
+        <select id="activity">
+          <option value="1.20">Sedentário — pouca atividade</option>
+          <option value="1.375">Leve — 1 a 3 dias/semana</option>
+          <option value="1.55" selected>Moderado — 3 a 5 dias/semana</option>
+          <option value="1.725">Alto — 6 a 7 dias/semana</option>
+          <option value="1.90">Muito alto — treino intenso/rotina física</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="saveProfile">Calcular gasto diário</button>
+
+    <div class="mini-grid">
+      <div class="mini"><small>Metabolismo basal</small><b id="bmrValue">—</b></div>
+      <div class="mini"><small>Gasto diário</small><b id="tdeeValue">—</b></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2>⚖️ Peso real</h2>
+      <span class="badge" id="weightChangeBadge">—</span>
+    </div>
+
+    <div class="field-grid">
+      <div>
+        <label for="weightDate">Data</label>
+        <input id="weightDate" type="date">
+      </div>
+      <div>
+        <label for="weightLog">Peso (kg)</label>
+        <input id="weightLog" type="number" min="20" max="300" step="0.1" placeholder="Ex.: 64,8">
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="saveWeight">Registrar peso</button>
+
+    <div class="mini-grid">
+      <div class="mini"><small>Variação real</small><b id="realWeightChange">—</b></div>
+      <div class="mini"><small>Variação teórica</small><b id="theoreticalWeightChange">—</b></div>
+    </div>
+
+    <div id="weightHistory" style="margin-top:12px">
+      <div class="empty-state">Nenhum peso registrado ainda.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="section-title">
+      <h2>🔄 Minhas Calorias</h2>
+      <span class="badge" id="syncBadge">Ativa</span>
+    </div>
+
+    <label style="display:flex;align-items:center;gap:10px;margin-top:0">
+      <input id="syncEnabled" type="checkbox" checked>
+      <span>Sincronizar automaticamente as kcal consumidas</span>
+    </label>
+
+    <div class="note-box" id="syncStatus">
+      Procurando dados do Minhas Calorias...
+    </div>
+
+    <button class="btn btn-primary" id="syncNow">Sincronizar agora</button>
+    <div class="note-box" style="margin-top:10px">A sincronização é feita somente por este app. O HTML do <b>Minhas Calorias</b> não precisa ser alterado.</div>
+  </div>
+</section>
+
+<!-- MENU -->
+<div class="menu-modal" id="menuModal">
+  <div class="menu-box">
+    <h2>Menu</h2>
+
+    <button class="menu-item menu-page" data-page="home">🏠 Início</button>
+    <button class="menu-item menu-page" data-page="plan">🗓️ Planejamento</button>
+    <button class="menu-item menu-page" data-page="record">➕ Registrar dia</button>
+    <button class="menu-item menu-calendar" data-page="calendar">📅 Calendário</button>
+    <button class="menu-item menu-page" data-page="history">📊 Histórico</button>
+    <button class="menu-item menu-profile" data-page="profile">👤 Perfil e peso</button>
+    <button class="menu-item menu-calendar" id="menuSyncNow">🔄 Sincronizar calorias</button>
+    <button class="menu-item menu-export" id="exportBtn">📤 Exportar dados</button>
+    <button class="menu-item menu-import" id="importBtn">📥 Importar dados</button>
+    <button class="menu-item menu-delete" id="resetBtn">🗑️ Apagar dados</button>
+    <button class="menu-item menu-close" id="menuClose">Fechar</button>
+
+    <input type="file" id="importFile" accept="application/json" hidden>
+  </div>
+</div>
+
+<!-- MODAL RESET -->
+<div class="modal" id="resetModal">
+  <div class="modal-box">
+    <div class="section-title">
+      <h2>Apagar todos os dados?</h2>
+    </div>
+
+    <p style="color:var(--text2);font-size:13px;line-height:1.5">
+      Isso removerá perfil, metas, planejamento, peso e histórico salvos neste dispositivo.
+    </p>
+
+    <button class="btn btn-neutral" id="cancelReset">Cancelar</button>
+    <button class="btn btn-red" id="confirmReset">Apagar tudo</button>
+  </div>
+</div>
+
+<nav class="bottom">
+  <button class="nav active" data-page="home"><span>⌂</span>Início</button>
+  <button class="nav" data-page="plan"><span>◎</span>Plano</button>
+  <button class="nav" data-page="record"><span>＋</span>Registrar</button>
+  <button class="nav" data-page="calendar"><span>▦</span>Calendário</button>
+  <button class="nav" data-page="history"><span>▥</span>Histórico</button>
+</nav>
+
+<script>
+const STORAGE_KEY="metaDeficit_v3";
+const PREV_KEY="metaDeficit_v2";
+const OLD_KEY="metaDeficit_v1";
+const CALORIE_STATE_KEY="minhasCaloriasCompleto";
+
+const DAY_NAMES=["Seg","Ter","Qua","Qui","Sex","Sáb","Dom"];
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(Number(n||0)).toLocaleString("pt-BR");
+const fmtKg=n=>Number(n||0).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+
+function blankState(){
+  return {
+    profile:null,
+    goal:{type:"kcal",kcal:0,sourceValue:0},
+    records:{},
+    weightLogs:[],
+    weeklyGoals:{},
+    weeklyPlans:{},
+    weeklySummaries:{},
+    sync:{enabled:true,lastSyncAt:null,lastSourceUpdate:null,lastSummary:null}
+  };
+}
+
+let raw=localStorage.getItem(STORAGE_KEY);
+if(!raw){
+  raw=localStorage.getItem(PREV_KEY)||localStorage.getItem(OLD_KEY);
+}
+let state=raw?Object.assign(blankState(),JSON.parse(raw)):blankState();
+state.sync=Object.assign({enabled:true,lastSyncAt:null,lastSourceUpdate:null,lastSummary:null},state.sync||{});
+
+function save(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(state));
+}
+
+
+function buildDirectCaloriePayload(){
+  try{
+    const raw=localStorage.getItem(CALORIE_STATE_KEY);
+    if(!raw)return null;
+    const calorieState=JSON.parse(raw);
+    const days={};
+
+    Object.entries(calorieState.days||{}).forEach(([date,d])=>{
+      let consumedKcal=0;
+      let foodCount=0;
+      Object.values(d?.meals||{}).forEach(arr=>{
+        (Array.isArray(arr)?arr:[]).forEach(item=>{
+          foodCount++;
+          consumedKcal+=Number(item?.k||0);
+        });
+      });
+      if(foodCount>0){
+        days[date]={consumedKcal:Math.max(0,consumedKcal),foodCount};
+      }
+    });
+
+    return {version:1,source:"minhasCaloriasCompleto-direto",updatedAt:new Date().toISOString(),days};
+  }catch(err){
+    return null;
+  }
+}
+
+function readCalorieSyncPayload(){
+  return buildDirectCaloriePayload();
+}
+
+function syncCaloriesFromCalorieApp({manual=false,rerender=true}={}){
+  state.sync=Object.assign({enabled:true,lastSyncAt:null,lastSourceUpdate:null,lastSummary:null},state.sync||{});
+  if(!state.sync.enabled&&!manual){
+    renderSyncStatus();
+    return {changed:false,reason:"disabled"};
+  }
+
+  const payload=readCalorieSyncPayload();
+  if(!payload){
+    state.sync.lastSyncAt=new Date().toISOString();
+    state.sync.lastSummary={found:false,imported:0,updated:0,removed:0,skipped:0};
+    save();
+    renderSyncStatus();
+    return {changed:false,reason:"not-found"};
+  }
+
+  if(!state.profile){
+    state.sync.lastSyncAt=new Date().toISOString();
+    state.sync.lastSourceUpdate=payload.updatedAt||null;
+    state.sync.lastSummary={found:true,pendingProfile:true,imported:0,updated:0,removed:0,skipped:0};
+    save();
+    renderSyncStatus();
+    return {changed:false,reason:"no-profile"};
+  }
+
+  const sourceDays=payload.days||{};
+  let imported=0,updated=0,removed=0,skipped=0;
+  let changed=false;
+
+  Object.entries(sourceDays).forEach(([date,info])=>{
+    const intake=Number(info?.consumedKcal);
+    if(!Number.isFinite(intake))return;
+
+    const existing=state.records[date];
+    if(existing&&existing.source!=="minhas-calorias"){
+      skipped++;
+      return;
+    }
+
+    const tdeeForDay=Number(existing?.tdeeAtTime)||Number(state.profile.tdee)||0;
+    const deficit=tdeeForDay-intake;
+    const next={
+      date,
+      mode:"intake",
+      intake,
+      deficit,
+      note:"Sincronizado do Minhas Calorias",
+      tdeeAtTime:tdeeForDay,
+      savedAt:existing?.savedAt||new Date().toISOString(),
+      source:"minhas-calorias",
+      sourceUpdatedAt:payload.updatedAt||new Date().toISOString()
+    };
+
+    if(!existing){
+      state.records[date]=next;
+      imported++;
+      changed=true;
+    }else if(Number(existing.intake)!==intake || Number(existing.deficit)!==deficit || existing.mode!=="intake"){
+      state.records[date]=next;
+      updated++;
+      changed=true;
+    }
+  });
+
+  Object.entries(state.records||{}).forEach(([date,r])=>{
+    if(r?.source==="minhas-calorias" && !Object.prototype.hasOwnProperty.call(sourceDays,date)){
+      // Snapshot protegido: não apaga automaticamente registros históricos.
+      r.sourceMissing=true;
+    }
+  });
+
+  state.sync.lastSyncAt=new Date().toISOString();
+  state.sync.lastSourceUpdate=payload.updatedAt||null;
+  state.sync.lastSummary={found:true,imported,updated,removed,skipped,totalSourceDays:Object.keys(sourceDays).length};
+  save();
+
+  if(rerender)renderAll();
+  else renderSyncStatus();
+
+  return {changed,imported,updated,removed,skipped};
+}
+
+function renderSyncStatus(){
+  const checkbox=$("syncEnabled");
+  const badge=$("syncBadge");
+  const status=$("syncStatus");
+  if(!checkbox||!badge||!status)return;
+
+  state.sync=Object.assign({enabled:true,lastSyncAt:null,lastSourceUpdate:null,lastSummary:null},state.sync||{});
+  checkbox.checked=state.sync.enabled!==false;
+  badge.textContent=state.sync.enabled!==false?"Ativa":"Desativada";
+
+  const s=state.sync.lastSummary;
+  if(!state.sync.enabled){
+    status.innerHTML="Sincronização automática desativada. Os registros manuais continuam funcionando normalmente.";
+    return;
+  }
+  if(!s){
+    status.innerHTML="Ainda não sincronizado. O app lê diretamente os dados salvos pelo <b>Minhas Calorias</b>; não é necessário modificar o outro app.";
+    return;
+  }
+  if(s.pendingProfile){
+    status.innerHTML="Dados do <b>Minhas Calorias</b> encontrados. Configure seu perfil aqui para o app calcular o déficit a partir das kcal consumidas.";
+    return;
+  }
+  if(!s.found){
+    status.innerHTML="Não encontrei dados do <b>Minhas Calorias</b> nesta origem. Os dois apps precisam estar no mesmo domínio para compartilhar os dados automaticamente.";
+    return;
+  }
+
+  const when=state.sync.lastSyncAt?new Date(state.sync.lastSyncAt).toLocaleString("pt-BR"):"agora";
+  status.innerHTML=`Última sincronização: <b>${when}</b><br>${s.totalSourceDays||0} dias encontrados · ${s.imported||0} novos · ${s.updated||0} atualizados · ${s.skipped||0} mantidos como manuais.`;
+}
+
+function localISO(date=new Date()){
+  const d=new Date(date);
+  const off=d.getTimezoneOffset();
+  return new Date(d.getTime()-off*60000).toISOString().slice(0,10);
+}
+
+function parseISO(s){
+  const [y,m,d]=s.split("-").map(Number);
+  return new Date(y,m-1,d);
+}
+
+function mondayOf(date){
+  const d=new Date(date);
+  d.setHours(0,0,0,0);
+  const day=d.getDay();
+  d.setDate(d.getDate()+(day===0?-6:1-day));
+  return d;
+}
+
+function sundayOf(date){
+  const d=mondayOf(date);
+  d.setDate(d.getDate()+6);
+  return d;
+}
+
+function weekKey(date=new Date()){
+  return localISO(mondayOf(date));
+}
+
+function weekRange(date=new Date()){
+  const a=mondayOf(date);
+  const b=sundayOf(date);
+  return a.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" – "+
+         b.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+}
+
+function sameWeek(dateStr,ref=new Date()){
+  const d=parseISO(dateStr);
+  return d>=mondayOf(ref)&&d<=sundayOf(ref);
+}
+
+function dayIndexMon(date){
+  const d=new Date(date).getDay();
+  return d===0?6:d-1;
+}
+
+function currentGoal(){
+  return state.weeklyGoals[weekKey()]||state.goal||{type:"kcal",kcal:0,sourceValue:0};
+}
+
+function currentPlan(){
+  const key=weekKey();
+  if(!state.weeklyPlans[key]){
+    state.weeklyPlans[key]=[0,0,0,0,0,0,0];
+  }
+  return state.weeklyPlans[key];
+}
+
+function getWeekRecords(ref=new Date()){
+  return Object.values(state.records||{})
+    .filter(r=>sameWeek(r.date,ref))
+    .sort((a,b)=>a.date.localeCompare(b.date));
+}
+
+function getWeekDeficit(ref=new Date()){
+  return getWeekRecords(ref).reduce((s,r)=>s+Number(r.deficit||0),0);
+}
+
+function remainingPlannedDeficitDays(){
+  const plan=currentPlan();
+  const today=new Date();
+  today.setHours(0,0,0,0);
+  const end=sundayOf(today);
+  let count=0;
+
+  for(let d=new Date(today);d<=end;d.setDate(d.getDate()+1)){
+    const idx=dayIndexMon(d);
+    const key=localISO(d);
+    if(plan[idx]===0&&!state.records[key]) count++;
+  }
+  return count;
+}
+
+function getBMR({weight,height,age,sex}){
+  if(age<18){
+    return sex==="male"
+      ? 17.686*weight+658.2
+      : 13.384*weight+692.6;
+  }
+
+  return sex==="male"
+    ? 10*weight+6.25*height-5*age+5
+    : 10*weight+6.25*height-5*age-161;
+}
+
+function closePastWeeks(){
+  const keys=new Set();
+
+  Object.values(state.records||{}).forEach(r=>keys.add(weekKey(parseISO(r.date))));
+  Object.keys(state.weeklyGoals||{}).forEach(k=>keys.add(k));
+
+  const nowKey=weekKey();
+
+  keys.forEach(k=>{
+    if(k>=nowKey)return;
+
+    const ref=parseISO(k);
+    const recs=getWeekRecords(ref);
+    const goal=state.weeklyGoals[k]?.kcal||0;
+    const deficit=recs.reduce((s,r)=>s+Number(r.deficit||0),0);
+    const maintenanceDays=recs.filter(r=>r.mode==="maintenance").length;
+
+    state.weeklySummaries[k]={
+      week:k,
+      goal,
+      deficit,
+      maintenanceDays,
+      days:recs.length,
+      met:goal>0&&deficit>=goal
+    };
+  });
+
+  save();
+}
+
+function showPage(name){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.querySelectorAll(".nav").forEach(n=>n.classList.remove("active"));
+
+  $("page-"+name)?.classList.add("active");
+  document.querySelectorAll(`.nav[data-page="${name}"]`).forEach(n=>n.classList.add("active"));
+
+  const titles={
+    home:"Meta de Déficit",
+    plan:"Planejamento",
+    record:"Registrar dia",
+    calendar:"Calendário",
+    history:"Histórico",
+    profile:"Perfil e peso"
+  };
+
+  $("topTitle").textContent=titles[name]||"Meta de Déficit";
+  closeMenu();
+  window.scrollTo({top:0,behavior:"smooth"});
+
+  if(name==="history"){
+    setTimeout(renderChart,60);
+  }
+}
+
+function calcProfile(){
+  const weight=Number($("weight").value);
+  const height=Number($("height").value);
+  const age=Number($("age").value);
+  const sex=$("sex").value;
+  const activity=Number($("activity").value);
+
+  if(!weight||!height||!age||!sex){
+    alert("Preencha peso, altura, idade e sexo.");
+    return;
+  }
+
+  const bmr=getBMR({weight,height,age,sex});
+  const tdee=bmr*activity;
+
+  state.profile={
+    weight,height,age,sex,activity,bmr,tdee,
+    updatedAt:new Date().toISOString()
+  };
+
+  save();
+  renderAll();
+  showPage("home");
+}
+
+function setGoalType(type){
+  state.goal.type=type;
+  $("goalKcalTab").classList.toggle("active",type==="kcal");
+  $("goalKgTab").classList.toggle("active",type==="kg");
+  $("goalKcalBox").classList.toggle("hidden",type!=="kcal");
+  $("goalKgBox").classList.toggle("hidden",type!=="kg");
+}
+
+function saveGoal(){
+  if(!state.profile){
+    alert("Configure seu perfil primeiro.");
+    showPage("profile");
+    return;
+  }
+
+  const type=state.goal.type||"kcal";
+  const value=type==="kcal"
+    ? Number($("goalKcal").value)
+    : Number(String($("goalKg").value).replace(",","."));
+
+  if(!value||value<0){
+    alert("Digite uma meta válida.");
+    return;
+  }
+
+  const goal={
+    type,
+    kcal:type==="kcal"?value:value*7700,
+    sourceValue:value
+  };
+
+  state.goal=goal;
+  state.weeklyGoals[weekKey()]=goal;
+
+  save();
+  renderAll();
+  showPage("home");
+}
+
+function renderPlan(){
+  const plan=currentPlan();
+  $("planDays").innerHTML=plan.map((v,i)=>`
+    <button class="plan-day ${v===0?"active":""}" data-day="${i}">
+      <b>${DAY_NAMES[i]}</b>
+      <small>${v===0?"Déficit":"Manutenção"}</small>
+    </button>
+  `).join("");
+
+  document.querySelectorAll("[data-day]").forEach(btn=>{
+    btn.onclick=()=>{
+      const i=Number(btn.dataset.day);
+      plan[i]=plan[i]===0?1:0;
+      state.weeklyPlans[weekKey()]=plan;
+      renderPlan();
+    };
+  });
+
+  const count=plan.filter(v=>v===0).length;
+  const goal=currentGoal().kcal||0;
+
+  $("planDeficitDays").textContent=count;
+  $("planPerDay").textContent=count?fmt(goal/count)+" kcal":"0 kcal";
+}
+
+function savePlan(){
+  state.weeklyPlans[weekKey()]=currentPlan();
+  save();
+  renderAll();
+  alert("Planejamento salvo.");
+}
+
+function setRecordMode(mode){
+  $("intakeTab").classList.toggle("active",mode==="intake");
+  $("deficitTab").classList.toggle("active",mode==="deficit");
+  $("maintenanceTab").classList.toggle("active",mode==="maintenance");
+
+  $("intakeBox").classList.toggle("hidden",mode!=="intake");
+  $("deficitBox").classList.toggle("hidden",mode!=="deficit");
+  $("maintenanceBox").classList.toggle("hidden",mode!=="maintenance");
+
+  $("page-record").dataset.mode=mode;
+  previewRecord();
+}
+
+function previewRecord(){
+  if(!state.profile){
+    $("recordTdee").textContent="—";
+    $("previewDeficit").textContent="—";
+    return;
+  }
+
+  $("recordTdee").textContent=fmt(state.profile.tdee)+" kcal";
+
+  const mode=$("page-record").dataset.mode||"intake";
+  let deficit=0;
+
+  if(mode==="intake"){
+    if($("intake").value===""){
+      $("previewDeficit").textContent="—";
+      return;
+    }
+    deficit=state.profile.tdee-Number($("intake").value);
+  }else if(mode==="deficit"){
+    if($("directDeficit").value===""){
+      $("previewDeficit").textContent="—";
+      return;
+    }
+    deficit=Number($("directDeficit").value);
+  }
+
+  $("previewDeficit").textContent=(deficit<0?"−":"")+fmt(Math.abs(deficit))+" kcal";
+  $("previewDeficit").style.color=deficit<0?"var(--red)":"var(--green)";
+}
+
+function saveRecord(){
+  if(!state.profile){
+    alert("Configure seu perfil primeiro.");
+    showPage("profile");
+    return;
+  }
+
+  const date=$("recordDate").value;
+  if(!date){
+    alert("Escolha a data.");
+    return;
+  }
+
+  const mode=$("page-record").dataset.mode||"intake";
+  let intake=null;
+  let deficit=0;
+
+  if(mode==="intake"){
+    if($("intake").value===""){
+      alert("Digite o consumo.");
+      return;
+    }
+    intake=Number($("intake").value);
+    deficit=state.profile.tdee-intake;
+  }else if(mode==="deficit"){
+    if($("directDeficit").value===""){
+      alert("Digite o déficit.");
+      return;
+    }
+    deficit=Number($("directDeficit").value);
+  }else{
+    intake=state.profile.tdee;
+    deficit=0;
+  }
+
+  state.records[date]={
+    date,
+    mode,
+    intake,
+    deficit,
+    note:$("note").value.trim(),
+    tdeeAtTime:state.profile.tdee,
+    savedAt:new Date().toISOString()
+  };
+
+  save();
+  cancelEditMode();
+  renderAll();
+  showPage("home");
+}
+
+function editRecord(date){
+  const r=state.records[date];
+  if(!r)return;
+
+  showPage("record");
+  $("recordDate").value=date;
+  $("note").value=r.note||"";
+  setRecordMode(r.mode||"deficit");
+
+  if(r.mode==="intake")$("intake").value=r.intake??"";
+  if(r.mode==="deficit")$("directDeficit").value=r.deficit??"";
+
+  $("recordTitle").textContent="✏️ Editar registro";
+  $("cancelEdit").classList.remove("hidden");
+  previewRecord();
+}
+
+function cancelEditMode(){
+  $("recordTitle").textContent="➕ Novo registro";
+  $("cancelEdit").classList.add("hidden");
+  $("recordDate").value=localISO();
+  $("intake").value="";
+  $("directDeficit").value="";
+  $("note").value="";
+  setRecordMode("intake");
+}
+
+function deleteRecord(date){
+  if(confirm("Excluir este registro?")){
+    delete state.records[date];
+    save();
+    renderAll();
+  }
+}
+
+function saveWeight(){
+  const date=$("weightDate").value;
+  const weight=Number($("weightLog").value);
+
+  if(!date||!weight){
+    alert("Preencha data e peso.");
+    return;
+  }
+
+  state.weightLogs=(state.weightLogs||[]).filter(x=>x.date!==date);
+  state.weightLogs.push({date,weight});
+  state.weightLogs.sort((a,b)=>a.date.localeCompare(b.date));
+
+  if(state.profile){
+    state.profile.weight=weight;
+    const bmr=getBMR(state.profile);
+    state.profile.bmr=bmr;
+    state.profile.tdee=bmr*state.profile.activity;
+  }
+
+  save();
+  $("weightLog").value="";
+  renderAll();
+}
+
+function renderProfile(){
+  if(!state.profile){
+    $("bmrValue").textContent="—";
+    $("tdeeValue").textContent="—";
+    $("homeTdee").textContent="—";
+    $("ageBadge").textContent="Não configurado";
+    return;
+  }
+
+  const p=state.profile;
+
+  $("weight").value=p.weight;
+  $("height").value=p.height;
+  $("age").value=p.age;
+  $("sex").value=p.sex;
+  $("activity").value=String(p.activity);
+
+  $("bmrValue").textContent=fmt(p.bmr)+" kcal";
+  $("tdeeValue").textContent=fmt(p.tdee)+" kcal";
+  $("homeTdee").textContent=fmt(p.tdee)+" kcal";
+  $("recordTdee").textContent=fmt(p.tdee)+" kcal";
+  $("ageBadge").textContent=p.age<18?"10–17 anos":"18+";
+}
+
+function renderGoal(){
+  const g=currentGoal();
+
+  setGoalType(g.type||"kcal");
+
+  if(g.type==="kg"){
+    $("goalKg").value=g.sourceValue||"";
+  }else{
+    $("goalKcal").value=g.sourceValue||"";
+  }
+
+  const done=getWeekDeficit();
+  const pct=g.kcal>0?clamp(done/g.kcal*100,0,100):0;
+
+  $("heroProgress").style.width=pct+"%";
+  $("heroPct").textContent=Math.round(pct)+"%";
+
+  $("goalWarning").classList.add("hidden");
+
+  if(state.profile&&g.kcal){
+    const daily=g.kcal/7;
+    const ratio=daily/state.profile.tdee;
+
+    if(ratio>.25||daily>1000){
+      $("goalWarning").classList.remove("hidden");
+      $("goalWarning").innerHTML="<b>⚠️ Meta bastante alta.</b><br>Ela representa um déficit diário elevado em relação ao gasto estimado.";
+    }
+  }
+}
+
+function renderSummary(){
+  const goal=currentGoal().kcal||0;
+  const done=getWeekDeficit();
+  const remaining=Math.max(0,goal-done);
+  const records=getWeekRecords();
+  const avg=records.length?done/records.length:0;
+  const defDays=remainingPlannedDeficitDays();
+  const needed=defDays?remaining/defDays:0;
+  const projected=records.length?avg*7:0;
+
+  $("heroLabel").textContent=goal>0 ? "Falta para a meta" : "Meta semanal";
+  $("heroRemaining").textContent=goal>0 ? fmt(remaining)+" kcal" : "—";
+  $("homeDone").textContent=fmt(done)+" kcal";
+  $("homeGoal").textContent=goal>0 ? fmt(goal)+" kcal" : "—";
+  $("homeAvg").textContent=fmt(avg)+" kcal";
+
+  $("projectedDeficit").textContent=fmt(projected)+" kcal";
+  $("projectedKg").textContent=fmtKg(projected/7700)+" kg";
+  $("neededAvg").textContent=fmt(needed)+" kcal";
+  $("maintenanceCount").textContent=currentPlan().filter(x=>x===1).length;
+
+  if(!state.profile){
+    $("heroText").textContent="Configure seu perfil para começar.";
+  }else if(!goal){
+    $("heroText").textContent="Defina uma meta semanal para calcular quanto ainda falta.";
+  }else if(remaining<=0){
+    $("heroText").textContent="Meta semanal atingida.";
+  }else{
+    $("heroText").textContent="Você já acumulou "+fmt(done)+" kcal de déficit nesta semana e faltam "+fmt(remaining)+" kcal para a meta.";
+  }
+
+  $("weekDeficit").textContent=fmt(done)+" kcal";
+  $("weekRemaining").textContent=fmt(remaining)+" kcal";
+  $("daysLeft").textContent=defDays;
+  $("dailyNeeded").textContent=fmt(needed)+" kcal";
+
+  if(!goal){
+    $("weekMessage").textContent="Configure uma meta para acompanhar o progresso.";
+  }else if(remaining<=0){
+    $("weekMessage").innerHTML="<b>✅ Meta atingida.</b><br>Os próximos registros continuam sendo somados normalmente.";
+  }else if(defDays===0){
+    $("weekMessage").textContent="Não há mais dias planejados para déficit nesta semana.";
+  }else{
+    $("weekMessage").innerHTML="Faltam em média <b>"+fmt(needed)+" kcal</b> de déficit por dia planejado restante.";
+  }
+}
+
+function renderHistory(){
+  const records=getWeekRecords().sort((a,b)=>b.date.localeCompare(a.date));
+
+  $("historyCount").textContent=records.length+(records.length===1?" dia":" dias");
+
+  if(!records.length){
+    $("historyList").innerHTML='<div class="empty-state">Nenhum dia registrado ainda.</div>';
+    return;
+  }
+
+  $("historyList").innerHTML=records.map(r=>{
+    const d=parseISO(r.date);
+    const dateLabel=d.toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"2-digit"});
+
+    let detail="";
+    if(r.mode==="intake"){
+      detail=(r.source==="minhas-calorias"?"Sincronizado do Minhas Calorias · ":"")+"Consumo: "+fmt(r.intake)+" kcal · Gasto: "+fmt(r.tdeeAtTime)+" kcal";
+    }else if(r.mode==="maintenance"){
+      detail="Dia de manutenção · "+fmt(r.tdeeAtTime)+" kcal";
+    }else{
+      detail="Déficit informado manualmente";
+    }
+
+    if(r.note)detail+=" · "+r.note;
+
+    return `
+      <div class="history-item">
+        <div>
+          <b>${dateLabel}</b>
+          <small>${detail}</small>
+        </div>
+
+        <div>
+          <div class="history-value" style="color:${r.deficit<0?"var(--red)":"var(--primary)"}">
+            ${r.deficit<0?"−":""}${fmt(Math.abs(r.deficit))} kcal
+          </div>
+
+          <div class="inline-actions">
+            <button class="small-btn" onclick="editRecord('${r.date}')">Editar</button>
+            <button class="small-btn del" onclick="deleteRecord('${r.date}')">Excluir</button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderWeeklyHistory(){
+  closePastWeeks();
+
+  const arr=Object.values(state.weeklySummaries||{}).sort((a,b)=>b.week.localeCompare(a.week));
+  $("weeksCount").textContent=arr.length;
+
+  if(!arr.length){
+    $("weeklyHistory").innerHTML='<div class="empty-state">Nenhuma semana fechada ainda.</div>';
+  }else{
+    $("weeklyHistory").innerHTML=arr.map(w=>{
+      const start=parseISO(w.week);
+      const end=sundayOf(start);
+      const label=start.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"})+" – "+
+                  end.toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+
+      return `
+        <div class="history-item">
+          <div>
+            <b>${label}</b>
+            <small>${w.days} registros · ${w.maintenanceDays} manutenção</small>
+          </div>
+          <div class="history-value" style="color:${w.met?"var(--green)":"var(--primary)"}">
+            ${fmt(w.deficit)} / ${fmt(w.goal)} kcal
+            <small>${w.met?"Meta cumprida":"Abaixo da meta"}</small>
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  let streak=0;
+  for(const w of arr){
+    if(w.met)streak++;
+    else break;
+  }
+
+  $("streakBadge").textContent=streak+" "+(streak===1?"semana":"semanas");
+}
+
+function renderWeights(){
+  const arr=(state.weightLogs||[]).slice().sort((a,b)=>b.date.localeCompare(a.date));
+
+  if(!arr.length){
+    $("weightHistory").innerHTML='<div class="empty-state">Nenhum peso registrado ainda.</div>';
+  }else{
+    $("weightHistory").innerHTML=arr.slice(0,8).map(x=>`
+      <div class="weight-row">
+        <div>
+          <b>${parseISO(x.date).toLocaleDateString("pt-BR")}</b>
+          <div style="font-size:10px;color:var(--text2);margin-top:3px">Peso registrado</div>
+        </div>
+        <b>${fmtKg(x.weight)} kg</b>
+      </div>
+    `).join("");
+  }
+
+  if(arr.length>=2){
+    const first=arr[arr.length-1];
+    const last=arr[0];
+    const delta=last.weight-first.weight;
+
+    $("realWeightChange").textContent=(delta>0?"+":"")+fmtKg(delta)+" kg";
+    $("weightChangeBadge").textContent=(delta>0?"+":"")+fmtKg(delta)+" kg";
+  }else{
+    $("realWeightChange").textContent="—";
+    $("weightChangeBadge").textContent="—";
+  }
+
+  const totalDef=Object.values(state.records||{}).reduce((s,r)=>s+Number(r.deficit||0),0);
+  $("theoreticalWeightChange").textContent=(totalDef>=0?"−":"+")+fmtKg(Math.abs(totalDef)/7700)+" kg";
+}
+
+let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
+
+function renderCalendar(){
+  const totalDeficit=Object.values(state.records||{}).reduce((sum,r)=>sum+Number(r.deficit||0),0);
+  $("calendarTotalKcal").textContent=fmt(totalDeficit)+" kcal";
+  $("calendarTotalKg").textContent="≈ "+fmtKg(totalDeficit/7700)+" kg";
+
+  $("calendarTitle").textContent=calendarCursor.toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
+
+  const y=calendarCursor.getFullYear();
+  const m=calendarCursor.getMonth();
+  const first=new Date(y,m,1);
+  const offset=dayIndexMon(first);
+  const lastDay=new Date(y,m+1,0).getDate();
+
+  let html=["S","T","Q","Q","S","S","D"].map(x=>`<div class="calendar-head">${x}</div>`).join("");
+
+  for(let i=0;i<offset;i++){
+    html+='<div class="calendar-day empty"></div>';
+  }
+
+  for(let d=1;d<=lastDay;d++){
+    const date=new Date(y,m,d);
+    const key=localISO(date);
+    const r=state.records[key];
+
+    let cls="";
+    let status="";
+
+    if(r){
+      if(r.mode==="maintenance"){
+        cls="maint";
+        status="Manutenção";
+      }else if(r.deficit<0){
+        cls="over";
+        status="Superávit";
+      }else{
+        cls="good";
+        status="Déficit";
+      }
+    }
+
+    html+=`
+      <div class="calendar-day ${cls}">
+        <b>${d}</b>
+        <div class="status">
+          ${status}
+          ${r&&r.mode!=="maintenance" ? "<br>"+(r.deficit<0?"−":"")+fmt(Math.abs(r.deficit))+" kcal" : ""}
+        </div>
+      </div>
+    `;
+  }
+
+  $("calendarGrid").innerHTML=html;
+}
+
+function renderChart(){
+  const canvas=$("deficitChart");
+  const box=canvas.parentElement;
+  const dpr=window.devicePixelRatio||1;
+  const w=box.clientWidth-16;
+  const h=174;
+
+  canvas.width=w*dpr;
+  canvas.height=h*dpr;
+  canvas.style.width=w+"px";
+  canvas.style.height=h+"px";
+
+  const ctx=canvas.getContext("2d");
+  ctx.scale(dpr,dpr);
+  ctx.clearRect(0,0,w,h);
+
+  const left=28,right=10,top=10,bottom=25;
+  const cw=w-left-right;
+  const ch=h-top-bottom;
+
+  let cumulative=0;
+  const vals=[0];
+
+  for(let i=0;i<7;i++){
+    const d=mondayOf(new Date());
+    d.setDate(d.getDate()+i);
+    const r=state.records[localISO(d)];
+    cumulative+=r?Number(r.deficit||0):0;
+    vals.push(cumulative);
+  }
+
+  const goal=currentGoal().kcal||0;
+  const max=Math.max(goal,...vals,500);
+  const min=Math.min(0,...vals);
+  const range=max-min||1;
+
+  ctx.strokeStyle="#e5e7eb";
+  ctx.lineWidth=1;
+  ctx.beginPath();
+  ctx.moveTo(left,top);
+  ctx.lineTo(left,top+ch);
+  ctx.lineTo(left+cw,top+ch);
+  ctx.stroke();
+
+  if(goal>0){
+    const gy=top+ch-(goal-min)/range*ch;
+    ctx.setLineDash([5,5]);
+    ctx.strokeStyle="#f59e0b";
+    ctx.beginPath();
+    ctx.moveTo(left,gy);
+    ctx.lineTo(left+cw,gy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  ctx.strokeStyle="#667eea";
+  ctx.lineWidth=3;
+  ctx.beginPath();
+
+  vals.forEach((v,i)=>{
+    const x=left+(i/7)*cw;
+    const y=top+ch-(v-min)/range*ch;
+    if(i===0)ctx.moveTo(x,y);
+    else ctx.lineTo(x,y);
+  });
+
+  ctx.stroke();
+
+  ctx.fillStyle="#687187";
+  ctx.font="10px system-ui";
+
+  DAY_NAMES.forEach((n,i)=>{
+    const x=left+((i+1)/7)*cw;
+    ctx.fillText(n,x-8,h-7);
+  });
+}
+
+function renderAll(){
+  closePastWeeks();
+  renderProfile();
+  renderGoal();
+  renderPlan();
+  renderSummary();
+  renderHistory();
+  renderWeeklyHistory();
+  renderWeights();
+  renderCalendar();
+  renderSyncStatus();
+
+  $("weekRange").textContent=weekRange();
+  $("heroWeekRange").textContent=weekRange();
+
+  previewRecord();
+}
+
+function openMenu(){
+  $("menuModal").classList.add("open");
+}
+
+function closeMenu(){
+  $("menuModal").classList.remove("open");
+}
+
+function exportData(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;
+  a.download="meta-deficit-backup-"+localISO()+".json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(file){
+  const reader=new FileReader();
+
+  reader.onload=()=>{
+    try{
+      const data=JSON.parse(reader.result);
+      if(!data||typeof data!=="object")throw new Error();
+
+      state=Object.assign(blankState(),data);
+      save();
+      location.reload();
+    }catch{
+      alert("Não foi possível importar esse arquivo.");
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+/* eventos */
+$("menuBtn").onclick=openMenu;
+$("menuClose").onclick=closeMenu;
+$("menuModal").onclick=e=>{if(e.target===$("menuModal"))closeMenu()};
+$("plusBtn").onclick=()=>showPage("record");
+$("syncCaloriesHome").onclick=()=>{
+  const result=syncCaloriesFromCalorieApp({manual:true,rerender:true});
+  const status=$("syncCaloriesHomeStatus");
+  if(!status)return;
+
+  if(result?.reason==="not-found"){
+    status.textContent="Dados do Contagem de Calorias não encontrados";
+  }else if(result?.reason==="no-profile"){
+    status.textContent="Configure seu perfil para calcular o déficit";
+  }else if(result?.changed){
+    const total=(result.imported||0)+(result.updated||0)+(result.removed||0);
+    status.textContent=total>0 ? total+" dia(s) atualizado(s)" : "Sincronizado";
+  }else{
+    status.textContent="Já estava tudo atualizado";
+  }
+
+  setTimeout(()=>{
+    const homeStatus=$("syncCaloriesHomeStatus");
+    if(homeStatus)homeStatus.textContent="Atualizar as kcal consumidas agora";
+  },2500);
+};
+
+$("openCaloriesApp").onclick=()=>{location.href="https://kaua212106.github.io/Contagem-de-calorias-/";};
+
+document.querySelectorAll("[data-page]").forEach(btn=>{
+  btn.onclick=()=>showPage(btn.dataset.page);
+});
+
+$("saveProfile").onclick=calcProfile;
+
+$("goalKcalTab").onclick=()=>setGoalType("kcal");
+$("goalKgTab").onclick=()=>setGoalType("kg");
+$("saveGoal").onclick=saveGoal;
+$("savePlan").onclick=savePlan;
+
+$("intakeTab").onclick=()=>setRecordMode("intake");
+$("deficitTab").onclick=()=>setRecordMode("deficit");
+$("maintenanceTab").onclick=()=>setRecordMode("maintenance");
+$("intake").oninput=previewRecord;
+$("directDeficit").oninput=previewRecord;
+$("saveRecord").onclick=saveRecord;
+$("cancelEdit").onclick=cancelEditMode;
+
+$("saveWeight").onclick=saveWeight;
+
+$("prevMonth").onclick=()=>{
+  calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);
+  renderCalendar();
+};
+
+$("nextMonth").onclick=()=>{
+  calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1);
+  renderCalendar();
+};
+
+$("exportBtn").onclick=exportData;
+$("importBtn").onclick=()=>$("importFile").click();
+
+$("importFile").onchange=e=>{
+  const file=e.target.files?.[0];
+  if(file)importData(file);
+};
+
+$("resetBtn").onclick=()=>{
+  closeMenu();
+  $("resetModal").classList.add("open");
+};
+
+$("cancelReset").onclick=()=>{
+  $("resetModal").classList.remove("open");
+};
+
+$("confirmReset").onclick=()=>{
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(PREV_KEY);
+  localStorage.removeItem(OLD_KEY);
+  location.reload();
+};
+
+$("syncEnabled").onchange=()=>{
+  state.sync.enabled=$("syncEnabled").checked;
+  save();
+  if(state.sync.enabled)syncCaloriesFromCalorieApp({manual:true,rerender:true});
+  else renderSyncStatus();
+};
+
+$("syncNow").onclick=()=>syncCaloriesFromCalorieApp({manual:true,rerender:true});
+$("menuSyncNow").onclick=()=>{
+  closeMenu();
+  syncCaloriesFromCalorieApp({manual:true,rerender:true});
+  showPage("profile");
+};
+
+function autoSyncCalories(){
+  if(state.sync?.enabled!==false){
+    syncCaloriesFromCalorieApp({manual:false,rerender:true});
+  }
+}
+
+window.addEventListener("storage",e=>{
+  if(e.key===CALORIE_STATE_KEY)autoSyncCalories();
+});
+window.addEventListener("focus",autoSyncCalories);
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden)autoSyncCalories();
+});
+
+/* inicialização */
+$("recordDate").value=localISO();
+$("weightDate").value=localISO();
+$("todayLabel").textContent=new Date().toLocaleDateString("pt-BR",{day:"2-digit",month:"2-digit"});
+$("page-record").dataset.mode="intake";
+
+syncCaloriesFromCalorieApp({manual:false,rerender:false});
+renderAll();
+showPage("home");
+</script>
+
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load",()=>{
+    navigator.serviceWorker.register("./service-worker.js").catch(err=>{
+      console.error("Falha ao registrar o service worker:",err);
+    });
+  });
+}
+</script>
+
+<style id="deficitEnhancementsV4Style">
+.open-day-card{border:1px solid rgba(102,126,234,.28)}
+.open-day-row{display:flex;align-items:center;justify-content:space-between;gap:12px}.open-day-row b{display:block}.open-day-row small{display:block;color:var(--text2);margin-top:4px}.open-day-row button{border:0;border-radius:11px;padding:9px 12px;background:var(--primary);color:#fff;font-weight:800;white-space:nowrap}
+.history-status{display:inline-block;margin-top:4px;padding:2px 7px;border-radius:999px;font-size:10px;font-weight:850;background:rgba(245,158,11,.14);color:#b66a00}.history-status.done{background:rgba(16,185,129,.14);color:#087f5b}
+.home-order-list{display:grid;gap:7px;margin-top:10px}.home-order-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;align-items:center;gap:6px;border:1px solid var(--border);border-radius:11px;padding:8px 9px}.home-order-row button{border:0;border-radius:9px;padding:7px 10px;background:var(--soft);color:var(--text);font-weight:800}
+</style>
+<script id="deficitEnhancementsV4Script">
+// ============================================================
+// MELHORIAS — sincronização segura, pesos por data, snapshots,
+// projeção pelo plano, dias finalizados e organização da home.
+// ============================================================
+(()=>{
+const BRIDGE_KEY="calorieDeficitBridge_v2";
+const OPEN_DATE_KEY="calorieDeficitOpenDate";
+state.settings=state.settings&&typeof state.settings==="object"?state.settings:{};
+state.settings.homeOrder=Array.isArray(state.settings.homeOrder)?state.settings.homeOrder:["hero","summary","projection","dayStatus","quick"];
+state.sync=Object.assign({enabled:true,lastSyncAt:null,lastSourceUpdate:null,lastSummary:null,bridgePlan:{}},state.sync||{});
+state.weightLogs=Array.isArray(state.weightLogs)?state.weightLogs.filter(x=>x&&x.date&&Number(x.weight)>0):[];
+
+function dfSortWeights(){
+  const byDate=new Map();(state.weightLogs||[]).forEach(x=>{if(x?.date&&Number(x.weight)>0)byDate.set(String(x.date),{date:String(x.date),weight:Number(x.weight),source:x.source||"manual"})});
+  state.weightLogs=[...byDate.values()].sort((a,b)=>a.date.localeCompare(b.date));
+}
+function dfWeightForDate(date){
+  const k=typeof date==="string"?date:localISO(date instanceof Date?date:new Date(date));dfSortWeights();
+  if(!state.weightLogs.length)return Number(state.profile?.weight)||0;
+  const eligible=state.weightLogs.filter(x=>x.date<=k);
+  if(eligible.length)return Number(eligible.at(-1).weight)||0;
+  return Number(state.weightLogs[0].weight)||Number(state.profile?.weight)||0;
+}
+function dfTdeeForDate(date){
+  if(!state.profile)return 0;
+  const w=dfWeightForDate(date),p={...state.profile,weight:w};
+  const b=getBMR(p);return b>0?b*(Number(p.activity)||1.2):0;
+}
+function dfApplyCurrentWeight(){
+  if(!state.profile)return;
+  const today=localISO(),eligible=(state.weightLogs||[]).filter(x=>x.date<=today),w=eligible.length?Number(eligible.at(-1).weight):Number(state.profile.weight)||0;
+  if(w>0){state.profile.weight=w;state.profile.bmr=getBMR(state.profile);state.profile.tdee=state.profile.bmr*state.profile.activity}
+}
+function dfReadBridge(){
+  try{const raw=localStorage.getItem(BRIDGE_KEY);if(!raw)return null;const p=JSON.parse(raw);return p&&p.version>=2?p:null}catch(e){return null}
+}
+function dfMergeProfileAndWeights(payload){
+  let changed=false;
+  const p=payload?.profile||{};
+  if(!state.profile&&Number(p.age)>0&&Number(p.height)>0&&p.sex){
+    const weight=Number(p.weight)||Number(payload?.weights?.at?.(-1)?.weight)||0;
+    if(weight>0){const activity=Number(p.activity)||1.2,bmr=getBMR({weight,height:Number(p.height),age:Number(p.age),sex:p.sex});state.profile={weight,height:Number(p.height),age:Number(p.age),sex:p.sex,activity,bmr,tdee:bmr*activity,updatedAt:new Date().toISOString()};changed=true}
+  }else if(state.profile){
+    if(!state.profile.age&&Number(p.age)>0){state.profile.age=Number(p.age);changed=true}
+    if(!state.profile.height&&Number(p.height)>0){state.profile.height=Number(p.height);changed=true}
+    if(!state.profile.sex&&p.sex){state.profile.sex=p.sex;changed=true}
+    if(!state.profile.activity&&Number(p.activity)>0){state.profile.activity=Number(p.activity);changed=true}
+  }
+  (Array.isArray(payload?.weights)?payload.weights:[]).forEach(x=>{
+    if(!x?.date||!(Number(x.weight)>0))return;
+    const old=(state.weightLogs||[]).find(y=>y.date===x.date);
+    if(!old||Number(old.weight)!==Number(x.weight)){
+      state.weightLogs=(state.weightLogs||[]).filter(y=>y.date!==x.date);
+      state.weightLogs.push({date:x.date,weight:Number(x.weight),source:"minhas-calorias"});changed=true;
+    }
+  });
+  dfSortWeights();dfApplyCurrentWeight();return changed;
+}
+
+// Ponte nova; se ainda não existir, mantém compatibilidade com o estado antigo.
+buildDirectCaloriePayload=function(){
+  const bridge=dfReadBridge();if(bridge)return bridge;
+  try{
+    const raw=localStorage.getItem(CALORIE_STATE_KEY);if(!raw)return null;const calorieState=JSON.parse(raw),days={};
+    Object.entries(calorieState.days||{}).forEach(([date,d])=>{let consumedKcal=0,foodCount=0;Object.values(d?.meals||{}).forEach(arr=>(Array.isArray(arr)?arr:[]).forEach(item=>{foodCount++;consumedKcal+=Number(item?.k||0)}));if(foodCount>0)days[date]={consumedKcal:Math.max(0,consumedKcal),foodCount,finalized:date<localISO()}});
+    return {version:1,source:"minhasCaloriasCompleto-direto",updatedAt:new Date().toISOString(),days};
+  }catch(e){return null}
+};
+readCalorieSyncPayload=function(){return buildDirectCaloriePayload()};
+
+syncCaloriesFromCalorieApp=function({manual=false,rerender=true}={}){
+  state.sync=Object.assign({enabled:true,lastSyncAt:null,lastSourceUpdate:null,lastSummary:null,bridgePlan:{}},state.sync||{});
+  if(!state.sync.enabled&&!manual){renderSyncStatus();return {changed:false,reason:"disabled"}}
+  const payload=readCalorieSyncPayload();
+  if(!payload){state.sync.lastSyncAt=new Date().toISOString();state.sync.lastSummary={found:false,imported:0,updated:0,preserved:0,skipped:0};save();renderSyncStatus();return {changed:false,reason:"not-found"}}
+  let changed=dfMergeProfileAndWeights(payload);
+  if(!state.profile){state.sync.lastSyncAt=new Date().toISOString();state.sync.lastSourceUpdate=payload.updatedAt||null;state.sync.lastSummary={found:true,pendingProfile:true,imported:0,updated:0,preserved:0,skipped:0};save();renderSyncStatus();return {changed,reason:"no-profile"}}
+  const sourceDays=payload.days||{};let imported=0,updated=0,preserved=0,skipped=0,open=0;
+  Object.entries(sourceDays).forEach(([date,info])=>{
+    const intake=Number(info?.consumedKcal);if(!Number.isFinite(intake))return;
+    const existing=state.records[date];if(existing&&existing.source!=="minhas-calorias"){skipped++;return}
+    const payloadTdee=Number(info?.tdeeAtTime)||0;
+    const tdeeForDay=payloadTdee>0?payloadTdee:(Number(existing?.tdeeAtTime)||dfTdeeForDate(date)||Number(state.profile.tdee)||0);
+    const finalized=typeof info?.finalized==="boolean"?info.finalized:(date<localISO());if(!finalized)open++;
+    const next={date,mode:"intake",intake,deficit:tdeeForDay-intake,note:finalized?"Sincronizado do Contagem de Calorias":"Dia em andamento no Contagem de Calorias",tdeeAtTime:tdeeForDay,goalAtTime:Number(info?.goalKcal)||existing?.goalAtTime||null,weightAtTime:Number(info?.weightAtTime)||dfWeightForDate(date)||null,savedAt:existing?.savedAt||new Date().toISOString(),source:"minhas-calorias",sourceUpdatedAt:info?.lastUpdated||payload.updatedAt||new Date().toISOString(),finalized,provisional:!finalized,snapshotLocked:finalized,sourceMissing:false};
+    if(!existing){state.records[date]=next;imported++;changed=true}
+    else{
+      const keys=["intake","deficit","tdeeAtTime","goalAtTime","weightAtTime","finalized","provisional","sourceUpdatedAt"];
+      const differs=keys.some(k=>String(existing[k]??"")!==String(next[k]??""));
+      if(differs){state.records[date]={...existing,...next};updated++;changed=true}
+    }
+  });
+  // Nunca apaga automaticamente um dia já sincronizado. Se a origem sumir,
+  // o snapshot fica guardado para proteger o histórico.
+  Object.entries(state.records||{}).forEach(([date,r])=>{
+    if(r?.source==="minhas-calorias"&&!Object.prototype.hasOwnProperty.call(sourceDays,date)){
+      if(!r.sourceMissing){r.sourceMissing=true;changed=true}preserved++;
+    }
+  });
+  state.sync.bridgePlan=payload.weekPlan&&typeof payload.weekPlan==="object"?payload.weekPlan:{};
+  state.sync.lastSyncAt=new Date().toISOString();state.sync.lastSourceUpdate=payload.updatedAt||null;state.sync.lastSummary={found:true,imported,updated,preserved,skipped,open,totalSourceDays:Object.keys(sourceDays).length};save();
+  if(rerender)renderAll();else renderSyncStatus();return {changed,imported,updated,preserved,skipped,open};
+};
+
+renderSyncStatus=function(){
+  const checkbox=$("syncEnabled"),badge=$("syncBadge"),status=$("syncStatus");if(!checkbox||!badge||!status)return;
+  checkbox.checked=state.sync.enabled!==false;badge.textContent=state.sync.enabled!==false?"Ativa":"Desativada";const s=state.sync.lastSummary;
+  if(!state.sync.enabled)return void(status.innerHTML="Sincronização automática desativada. Os registros manuais continuam funcionando.");
+  if(!s)return void(status.innerHTML="Ainda não sincronizado. O app procura calorias, status do dia e pesos do <b>Contagem de Calorias</b>.");
+  if(s.pendingProfile)return void(status.innerHTML="Dados encontrados. Complete os dados físicos que faltarem para calcular o gasto.");
+  if(!s.found)return void(status.innerHTML="Não encontrei dados do <b>Contagem de Calorias</b> nesta origem.");
+  const when=state.sync.lastSyncAt?new Date(state.sync.lastSyncAt).toLocaleString("pt-BR"):"agora";
+  status.innerHTML=`Última sincronização: <b>${when}</b><br>${s.totalSourceDays||0} dias · ${s.imported||0} novos · ${s.updated||0} atualizados · ${s.preserved||0} snapshots protegidos · ${s.open||0} em andamento.`;
+};
+
+// Registros provisórios não entram no déficit definitivo da semana.
+getWeekRecords=function(ref=new Date()){
+  return Object.values(state.records||{}).filter(r=>sameWeek(r.date,ref)&&r?.provisional!==true).sort((a,b)=>a.date.localeCompare(b.date));
+};
+
+function dfOpenRecords(ref=new Date()){
+  return Object.values(state.records||{}).filter(r=>sameWeek(r.date,ref)&&r?.provisional===true).sort((a,b)=>b.date.localeCompare(a.date));
+}
+function openCalorieDate(date){
+  localStorage.setItem(OPEN_DATE_KEY,date);location.href="https://kaua212106.github.io/Contagem-de-calorias-/";
+}
+window.openCalorieDate=openCalorieDate;
+
+function dfRenderOpenDay(){
+  let card=$("openDayCard");
+  if(!card){card=document.createElement("div");card.id="openDayCard";card.className="card open-day-card";card.dataset.homeCard="dayStatus";const quick=$("syncCaloriesHome")?.closest(".quick-grid");if(quick)quick.parentElement.insertBefore(card,quick)}
+  const arr=dfOpenRecords();
+  if(!arr.length){card.innerHTML='<div class="open-day-row"><div><b>✓ Nenhum dia pendente</b><small>Os dias sincronizados desta semana já estão finalizados.</small></div></div>';return}
+  const r=arr[0],label=parseISO(r.date).toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"2-digit"});
+  card.innerHTML=`<div class="open-day-row"><div><b>⏳ ${label}: dia em andamento</b><small>${fmt(r.intake)} kcal registradas até agora. Esse déficit ainda não entra no total semanal.</small></div><button onclick="openCalorieDate('${r.date}')">Abrir dia</button></div>`;
+}
+
+renderHistory=function(){
+  const records=Object.values(state.records||{}).filter(r=>sameWeek(r.date,new Date())).sort((a,b)=>b.date.localeCompare(a.date));
+  $("historyCount").textContent=records.length+(records.length===1?" dia":" dias");
+  if(!records.length){$("historyList").innerHTML='<div class="empty-state">Nenhum dia registrado ainda.</div>';return}
+  $("historyList").innerHTML=records.map(r=>{
+    const d=parseISO(r.date),dateLabel=d.toLocaleDateString("pt-BR",{weekday:"short",day:"2-digit",month:"2-digit"});
+    const provisional=r.provisional===true;
+    let detail="";
+    if(r.mode==="intake")detail=(r.source==="minhas-calorias"?"Sincronizado do Contagem de Calorias · ":"")+"Consumo: "+fmt(r.intake)+" kcal · Gasto: "+fmt(r.tdeeAtTime)+" kcal";
+    else if(r.mode==="maintenance")detail="Dia de manutenção · "+fmt(r.tdeeAtTime)+" kcal";
+    else detail="Déficit informado manualmente";
+    if(r.note)detail+=" · "+r.note;
+    const value=provisional?"provisório":`${r.deficit<0?"−":""}${fmt(Math.abs(r.deficit))} kcal`;
+    return `<div class="history-item"><div><b>${dateLabel}</b><small>${detail}</small>${r.source==="minhas-calorias"?`<span class="history-status ${provisional?"":"done"}">${provisional?"EM ANDAMENTO":"FINALIZADO"}</span>`:""}</div><div><div class="history-value" style="color:${provisional?"var(--orange)":r.deficit<0?"var(--red)":"var(--primary)"}">${value}</div><div class="inline-actions">${r.source==="minhas-calorias"?`<button class="small-btn" onclick="openCalorieDate('${r.date}')">Abrir no app</button>`:`<button class="small-btn" onclick="editRecord('${r.date}')">Editar</button>`}<button class="small-btn del" onclick="deleteRecord('${r.date}')">Excluir</button></div></div></div>`;
+  }).join("");
+};
+
+const dfOldRenderSummary=renderSummary;
+renderSummary=function(){
+  dfOldRenderSummary();
+  const done=getWeekDeficit(),records=getWeekRecords(),pace=records.length?done/records.length*7:0,plan=state.sync.bridgePlan||{};
+  let remainingPlan=0,plannedCount=0;const today=localISO();
+  Object.entries(plan).forEach(([date,x])=>{
+    if(!sameWeek(date,new Date()))return;
+    const r=state.records?.[date];if(r&&!r.provisional)return;
+    if(date<today&&!r)return;
+    const pd=Number(x?.plannedDeficit);if(Number.isFinite(pd)){remainingPlan+=pd;plannedCount++}
+  });
+  let projected=done+remainingPlan;
+  if(!plannedCount){const deficitDays=currentPlan().filter(v=>v===0).length,per=deficitDays?(currentGoal().kcal||0)/deficitDays:0;projected=done+remainingPlannedDeficitDays()*per}
+  $("projectedDeficit").textContent=fmt(projected)+" kcal";$("projectedKg").textContent=fmtKg(projected/7700)+" kg";
+  $("projectionNote").innerHTML=`<b>Se seguir o planejamento:</b> ${fmt(projected)} kcal na semana.<br><b>Ritmo dos dias finalizados:</b> ${fmt(pace)} kcal/semana.${dfOpenRecords().length?`<br><small>${dfOpenRecords().length} dia(s) em andamento não entram no total definitivo.</small>`:""}`;
+};
+
+// Peso com vigência por data.
+calcProfile=function(){
+  const weight=Number($("weight").value),height=Number($("height").value),age=Number($("age").value),sex=$("sex").value,activity=Number($("activity").value);
+  if(!weight||!height||!age||!sex)return alert("Preencha peso, altura, idade e sexo.");
+  const oldWeight=Number(state.profile?.weight)||0,bmr=getBMR({weight,height,age,sex}),tdee=bmr*activity;
+  state.profile={...(state.profile||{}),weight,height,age,sex,activity,bmr,tdee,updatedAt:new Date().toISOString()};
+  if(Math.abs(weight-oldWeight)>.0001||!state.weightLogs.length){state.weightLogs=state.weightLogs.filter(x=>x.date!==localISO());state.weightLogs.push({date:localISO(),weight,source:"perfil"});dfSortWeights()}
+  save();renderAll();showPage("home");
+};
+$("saveProfile").onclick=calcProfile;
+
+saveWeight=function(){
+  const date=$("weightDate").value,weight=Number($("weightLog").value);if(!date||!weight)return alert("Preencha data e peso.");
+  state.weightLogs=(state.weightLogs||[]).filter(x=>x.date!==date);state.weightLogs.push({date,weight,source:"manual"});dfSortWeights();dfApplyCurrentWeight();
+  Object.values(state.records||{}).forEach(r=>{
+    if(!r?.date||r.date<date)return;
+    if(r.mode==="intake"){
+      const t=dfTdeeForDate(r.date);if(t>0){r.tdeeAtTime=t;r.weightAtTime=dfWeightForDate(r.date);r.deficit=t-Number(r.intake||0)}
+    }else if(r.mode==="maintenance"){const t=dfTdeeForDate(r.date);if(t>0){r.tdeeAtTime=t;r.weightAtTime=dfWeightForDate(r.date);r.deficit=0}}
+  });
+  save();$("weightLog").value="";renderAll();
+};
+$("saveWeight").onclick=saveWeight;
+
+// Organização da tela inicial.
+const DF_HOME_LABELS={hero:"Resumo principal",summary:"Contadores",projection:"Projeção",dayStatus:"Status do dia",quick:"Atalhos"};
+function dfTagHome(){
+  const page=$("page-home");if(!page)return;
+  page.querySelector(":scope > .hero-card")?.setAttribute("data-home-card","hero");
+  page.querySelector(":scope > .contadores")?.setAttribute("data-home-card","summary");
+  $("projectedDeficit")?.closest(".card")?.setAttribute("data-home-card","projection");
+  $("syncCaloriesHome")?.closest(".quick-grid")?.setAttribute("data-home-card","quick");
+  const keys=Object.keys(DF_HOME_LABELS),cur=state.settings.homeOrder||[];state.settings.homeOrder=[...cur.filter(k=>keys.includes(k)),...keys.filter(k=>!cur.includes(k))];
+}
+function dfApplyHomeOrder(){dfTagHome();const page=$("page-home");if(!page)return;state.settings.homeOrder.forEach(k=>{const el=page.querySelector(`:scope > [data-home-card="${k}"]`);if(el)page.appendChild(el)})}
+function dfRenderHomeOrder(){
+  let card=$("deficitHomeOrderCard");if(!card){card=document.createElement("div");card.id="deficitHomeOrderCard";card.className="card";card.innerHTML='<div class="section-title"><h2>🏠 Organizar início</h2><span class="badge">ordem</span></div><p class="note-box">Escolha a ordem dos principais blocos da tela inicial.</p><div class="home-order-list" id="deficitHomeOrderList"></div>';$("page-profile").appendChild(card)}
+  dfTagHome();deficitHomeOrderList.innerHTML=state.settings.homeOrder.map((k,i)=>`<div class="home-order-row"><span>${DF_HOME_LABELS[k]||k}</span><button data-du="${i}" ${i===0?"disabled":""}>↑</button><button data-dd="${i}" ${i===state.settings.homeOrder.length-1?"disabled":""}>↓</button></div>`).join("");
+  deficitHomeOrderList.querySelectorAll("[data-du]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.du);if(i<=0)return;[state.settings.homeOrder[i-1],state.settings.homeOrder[i]]=[state.settings.homeOrder[i],state.settings.homeOrder[i-1]];save();dfRenderHomeOrder();dfApplyHomeOrder()});
+  deficitHomeOrderList.querySelectorAll("[data-dd]").forEach(b=>b.onclick=()=>{const i=Number(b.dataset.dd);if(i>=state.settings.homeOrder.length-1)return;[state.settings.homeOrder[i+1],state.settings.homeOrder[i]]=[state.settings.homeOrder[i],state.settings.homeOrder[i+1]];save();dfRenderHomeOrder();dfApplyHomeOrder()});
+}
+
+const dfOldRenderAll=renderAll;
+renderAll=function(){dfOldRenderAll();dfRenderOpenDay();dfRenderHomeOrder();dfApplyHomeOrder()};
+
+// O botão antigo de abrir o app continua funcionando; agora também existe abertura por data.
+$("openCaloriesApp").onclick=()=>{location.href="https://kaua212106.github.io/Contagem-de-calorias-/"};
+
+window.addEventListener("storage",e=>{if(e.key===BRIDGE_KEY)syncCaloriesFromCalorieApp({manual:false,rerender:true})});
+
+// Faz uma sincronização com a ponte nova depois que todas as melhorias carregarem.
+dfSortWeights();dfApplyCurrentWeight();syncCaloriesFromCalorieApp({manual:false,rerender:false});renderAll();
+})();
+</script>
+
+</body>
+</html>
