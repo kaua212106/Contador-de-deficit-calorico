@@ -1,4 +1,4 @@
-const CACHE_NAME = "meta-deficit-v2-central-sync";
+const CACHE_NAME = "meta-deficit-v3-central-sync";
 const APP_SHELL = [
   "./",
   "./index.html",
