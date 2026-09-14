@@ -737,6 +737,25 @@ input:focus,select:focus,textarea:focus{
   color:#dc2626;
 }
 
+
+/* CONTADOR SEMANAL */
+.weekly-counter{
+  margin-top:15px;
+}
+.weekly-counter .calendar-total{
+  margin-bottom:0;
+}
+.week-selector{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+.week-selector button{
+  width:38px;height:38px;border-radius:12px;border:1px solid #e8eaf0;background:#f6f7fa;color:var(--primary);font-size:22px;
+}
+.week-label{font-size:13px;font-weight:800;text-transform:capitalize}
+
 /* CALENDÁRIO */
 .calendar-top{
   display:flex;
@@ -1279,6 +1298,29 @@ canvas{
       <button id="nextMonth">›</button>
     </div>
     <div class="calendar-grid" id="calendarGrid"></div>
+
+    <div class="weekly-counter">
+      <div class="week-selector">
+        <button id="prevWeek">‹</button>
+        <div class="week-label" id="weekCounterTitle">Semana</div>
+        <button id="nextWeek">›</button>
+      </div>
+      <div class="calendar-total">
+        <div class="calendar-total-main">
+          <small>Déficit da semana</small>
+          <b id="weeklyDeficitKcal">0 kcal</b>
+        </div>
+        <div class="calendar-total-kg">
+          <small>Estimativa em peso</small>
+          <b id="weeklyDeficitKg">≈ 0,00 kg</b>
+        </div>
+        <div class="calendar-total-note">
+          Média diária de déficit considerando segunda a domingo.
+          <b id="weeklyDeficitDay">0 kcal/dia</b>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -2276,6 +2318,26 @@ function renderWeights(){
 
 let calendarCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1);
 
+
+
+let weekCounterCursor=new Date();
+function startOfWeek(date){
+  const d=new Date(date); d.setHours(0,0,0,0);
+  const day=d.getDay();
+  d.setDate(d.getDate()-(day===0?6:day-1));
+  return d;
+}
+function renderWeeklyCounter(){
+  const start=startOfWeek(weekCounterCursor);
+  const end=new Date(start); end.setDate(start.getDate()+6);
+  const recs=getWeekRecords(start);
+  const total=recs.reduce((s,r)=>s+Number(r.deficit||0),0);
+  $("weeklyDeficitKcal").textContent=fmt(total)+" kcal";
+  $("weeklyDeficitKg").textContent="≈ "+fmtKg(total/7700)+" kg";
+  $("weeklyDeficitDay").textContent=fmt(Math.round(total/7))+" kcal/dia";
+  $("weekCounterTitle").textContent=start.toLocaleDateString("pt-BR",{day:"2-digit",month:"short"})+" - "+end.toLocaleDateString("pt-BR",{day:"2-digit",month:"short"});
+}
+
 function renderCalendar(){
   const totalDeficit=Object.values(state.records||{}).reduce((sum,r)=>sum+Number(r.deficit||0),0);
   $("calendarTotalKcal").textContent=fmt(totalDeficit)+" kcal";
@@ -2328,6 +2390,7 @@ function renderCalendar(){
   }
 
   $("calendarGrid").innerHTML=html;
+  renderWeeklyCounter();
 }
 
 function renderChart(){
@@ -2511,6 +2574,9 @@ $("saveRecord").onclick=saveRecord;
 $("cancelEdit").onclick=cancelEditMode;
 
 $("saveWeight").onclick=saveWeight;
+
+$("prevWeek").onclick=()=>{weekCounterCursor.setDate(weekCounterCursor.getDate()-7);renderWeeklyCounter();};
+$("nextWeek").onclick=()=>{weekCounterCursor.setDate(weekCounterCursor.getDate()+7);renderWeeklyCounter();};
 
 $("prevMonth").onclick=()=>{
   calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()-1,1);
